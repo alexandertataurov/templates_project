@@ -1,0 +1,198 @@
+@import 'tailwindcss';
+
+/* 🔹 DEBUG MODE */
+.debug-mode * {
+  outline: 1px solid red !important;
+}
+
+/* === Общие стили === */
+body {
+  font-family: "Consolas", sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.debug-terminal {
+  background: black;
+  color: green;
+  font-family: monospace;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* === Стили контейнера === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* === Навигация === */
+nav {
+  background-color: #1f2937;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-link {
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background 0.3s ease-in-out;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* === Кнопки === */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.button-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.button-primary:hover {
+  background-color: #2563eb;
+}
+
+.button-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.button-danger:hover {
+  background-color: #dc2626;
+}
+
+/* === Формы === */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border 0.3s ease-in-out;
+}
+
+input:focus, select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+/* === Анимация загрузки === */
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #ccc;
+  border-top: 5px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === Кнопка "Выбрать файл" === */
+.file-upload-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Прячем стандартный input file */
+.file-upload-button input {
+  display: none;
+}
+
+.file-upload-button:hover {
+  background-color: #2563eb;
+}
+
+/* === Стилизация списка полей === */
+.field-list {
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.field-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.field-item:last-child {
+  border-bottom: none;
+}
+
+/* === Анимация появления === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animated {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Стили для кастомного скроллбара */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+/* Подсветка кода */
+pre {
+  background-color: #1a202c;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
