@@ -7,8 +7,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.config import settings
-from app.routers import (
+from .config import settings
+from .routers import (
     contract, addendum, stats, specification, appendix,
     exchange_rate, invoice, pdf, template
 )

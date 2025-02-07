@@ -1,11 +1,16 @@
+"""
+Схемы для управления инвойсами.
+"""
+
 from datetime import date
 from typing import Annotated
-
 from pydantic import BaseModel, Field, condecimal
+from app.config import settings
+import logging
 
-PriceType = Annotated[
-    condecimal(max_digits=10, decimal_places=2), "PriceField"
-]  # ✅ Правильный вариант
+logger = logging.getLogger(__name__)
+
+PriceType = Annotated[condecimal(max_digits=10, decimal_places=2), "PriceField"]
 
 
 class InvoiceBase(BaseModel):
@@ -27,3 +32,7 @@ class InvoiceResponse(InvoiceBase):
 
     class Config:
         from_attributes = True
+
+
+if settings.DEBUG:
+    logger.debug("Схемы Invoice загружены")
