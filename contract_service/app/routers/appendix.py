@@ -8,7 +8,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.appendix import AppendixCreate, AppendixResponse
-from app.services.appendix_service import create_appendix, delete_appendix, get_appendices
+from app.services.appendix_service import (
+    create_appendix,
+    delete_appendix,
+    get_appendices,
+)
 from app.config import settings  # ✅ Добавлен Debug Mode
 
 logger = logging.getLogger(__name__)
@@ -17,7 +21,9 @@ router = APIRouter(prefix="/contracts/{contract_id}/appendices", tags=["Appendic
 
 
 @router.post("/", response_model=AppendixResponse)
-async def create_new_appendix(contract_id: int, appendix: AppendixCreate, db: AsyncSession = Depends(get_db)):
+async def create_new_appendix(
+    contract_id: int, appendix: AppendixCreate, db: AsyncSession = Depends(get_db)
+):
     """
     Создать новое приложение.
     """
@@ -37,12 +43,16 @@ async def list_appendices(contract_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.delete("/{appendix_id}", status_code=204)
-async def remove_appendix(contract_id: int, appendix_id: int, db: AsyncSession = Depends(get_db)):
+async def remove_appendix(
+    contract_id: int, appendix_id: int, db: AsyncSession = Depends(get_db)
+):
     """
     Удалить приложение.
     """
     if settings.DEBUG:
-        logger.debug("Удаление приложения ID: %d из контракта %d", appendix_id, contract_id)
+        logger.debug(
+            "Удаление приложения ID: %d из контракта %d", appendix_id, contract_id
+        )
 
     if not await delete_appendix(db, appendix_id):
         logger.warning("Приложение ID: %d не найдено", appendix_id)

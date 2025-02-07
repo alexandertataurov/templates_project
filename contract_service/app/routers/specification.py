@@ -7,16 +7,26 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.schemas.specification import SpecificationCreate, SpecificationResponse
-from app.services.specification_service import create_specification, delete_specification, get_contract_by_specification
+from app.services.specification_service import (
+    create_specification,
+    delete_specification,
+    get_contract_by_specification,
+)
 from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/contracts/{contract_id}/specifications", tags=["Specifications"])
+router = APIRouter(
+    prefix="/contracts/{contract_id}/specifications", tags=["Specifications"]
+)
 
 
 @router.post("/", response_model=SpecificationResponse)
-async def create_new_specification(contract_id: int, specification: SpecificationCreate, db: AsyncSession = Depends(get_db)):
+async def create_new_specification(
+    contract_id: int,
+    specification: SpecificationCreate,
+    db: AsyncSession = Depends(get_db),
+):
     """
     Создать новую спецификацию.
     """
@@ -27,7 +37,9 @@ async def create_new_specification(contract_id: int, specification: Specificatio
 
 
 @router.get("/contract/{specification_id}")
-async def get_contract_by_specification_endpoint(specification_id: int, db: AsyncSession = Depends(get_db)):
+async def get_contract_by_specification_endpoint(
+    specification_id: int, db: AsyncSession = Depends(get_db)
+):
     """
     Получить контракт по спецификации.
     """
@@ -43,12 +55,16 @@ async def get_contract_by_specification_endpoint(specification_id: int, db: Asyn
 
 
 @router.delete("/{spec_id}", status_code=204)
-async def remove_specification(contract_id: int, spec_id: int, db: AsyncSession = Depends(get_db)):
+async def remove_specification(
+    contract_id: int, spec_id: int, db: AsyncSession = Depends(get_db)
+):
     """
     Удалить спецификацию.
     """
     if settings.DEBUG:
-        logger.debug("Удаление спецификации ID %d из контракта %d", spec_id, contract_id)
+        logger.debug(
+            "Удаление спецификации ID %d из контракта %d", spec_id, contract_id
+        )
 
     contract = await get_contract_by_specification(db, spec_id)
     if not contract:

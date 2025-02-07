@@ -15,12 +15,18 @@ router = APIRouter(prefix="/exchange-rate", tags=["Exchange Rate"])
 
 
 @router.put("/contract/{contract_id}")
-async def update_contract_rate(contract_id: int, new_rate: float, db: AsyncSession = Depends(get_db)):
+async def update_contract_rate(
+    contract_id: int, new_rate: float, db: AsyncSession = Depends(get_db)
+):
     """
     Обновить курс валюты в контракте.
     """
     if settings.DEBUG:
-        logger.debug("Обновление курса валюты для контракта %d, новый курс: %f", contract_id, new_rate)
+        logger.debug(
+            "Обновление курса валюты для контракта %d, новый курс: %f",
+            contract_id,
+            new_rate,
+        )
 
     if new_rate <= 0:
         logger.warning("Попытка установить некорректный курс: %f", new_rate)

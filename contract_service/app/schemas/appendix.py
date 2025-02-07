@@ -9,6 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class AppendixBase(BaseModel):
     appendix_number: str = Field(..., max_length=50)
     appendix_date: date

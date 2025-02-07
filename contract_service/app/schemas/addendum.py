@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class AddendumBase(BaseModel):
     addendum_number: str
     addendum_date: date

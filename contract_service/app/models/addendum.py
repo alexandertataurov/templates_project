@@ -17,7 +17,12 @@ class Addendum(Base):
     __tablename__ = "addendums"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id", ondelete="CASCADE"), nullable=False, index=True)
+    contract_id = Column(
+        Integer,
+        ForeignKey("contracts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     addendum_number = Column(String(50), nullable=False, index=True)
     addendum_date = Column(Date, nullable=False)
     invoice_number = Column(String(50), nullable=True, index=True)

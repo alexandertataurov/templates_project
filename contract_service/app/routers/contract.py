@@ -17,7 +17,9 @@ router = APIRouter(prefix="/contracts", tags=["Contracts"])
 
 
 @router.post("/", response_model=ContractResponse)
-async def create_new_contract(contract: ContractCreate, db: AsyncSession = Depends(get_db)):
+async def create_new_contract(
+    contract: ContractCreate, db: AsyncSession = Depends(get_db)
+):
     """Создать новый контракт."""
     if settings.DEBUG:
         logger.debug("Создание нового контракта: %s", contract)

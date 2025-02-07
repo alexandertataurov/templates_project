@@ -6,7 +6,11 @@ import logging
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.services.stats_service import get_monthly_stats, get_total_addendum_amount, get_total_contract_amount
+from app.services.stats_service import (
+    get_monthly_stats,
+    get_total_addendum_amount,
+    get_total_contract_amount,
+)
 from app.config import settings
 
 logger = logging.getLogger(__name__)

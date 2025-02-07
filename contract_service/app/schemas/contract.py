@@ -48,6 +48,7 @@ class ContractBase(BaseModel):
 
 class ContractCreate(ContractBase):
     """Использует `ContractBase`, но отдельно определяет ID при создании."""
+
     pass
 
 

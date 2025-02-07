@@ -17,7 +17,12 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id = Column(Integer, primary_key=True, index=True)
-    invoice_id = Column(Integer, ForeignKey("invoices.id", ondelete="CASCADE"), nullable=False, index=True)
+    invoice_id = Column(
+        Integer,
+        ForeignKey("invoices.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     payment_date = Column(Date, nullable=False)
     amount = Column(Numeric(15, 2), nullable=False)
 

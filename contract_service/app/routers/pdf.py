@@ -52,7 +52,14 @@ async def export_contract(
 
     if format == "pdf":
         pdf_path = await convert_docx_to_pdf(docx_path)
-        return FileResponse(pdf_path, media_type="application/pdf", filename=f"contract_{contract_id}.pdf")
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=f"contract_{contract_id}.pdf",
+        )
 
-    return FileResponse(docx_path, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        filename=f"contract_{contract_id}.docx")
+    return FileResponse(
+        docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=f"contract_{contract_id}.docx",
+    )

@@ -9,8 +9,16 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from .config import settings
 from .routers import (
-    contract, addendum, stats, specification, appendix,
-    exchange_rate, invoice, pdf, template
+    contract,
+    addendum,
+    stats,
+    specification,
+    appendix,
+    exchange_rate,
+    invoice,
+    pdf,
+    template,
+    admin,
 )
 
 # Настройка логирования
@@ -33,6 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class DebugMiddleware(BaseHTTPMiddleware):
     """
     Middleware для добавления заголовка X-Debug-Mode.
@@ -47,7 +56,9 @@ class DebugMiddleware(BaseHTTPMiddleware):
             response.headers["X-Debug-Mode"] = "Enabled"
         return response
 
+
 app.add_middleware(DebugMiddleware)
+
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -60,6 +71,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"error": str(exc), "message": "Что-то пошло не так"},
     )
 
+
 @app.get("/health")
 def health_check():
     """
@@ -67,13 +79,19 @@ def health_check():
     """
     return {"status": "ok"}
 
+
 @app.get("/debug")
 def debug_info():
     """
     Проверка включенного Debug Mode.
     """
     logger.debug("Запрос на debug")
-    return {"debug_info": "Debug mode is active"} if settings.DEBUG else {"message": "Debug is off"}
+    return (
+        {"debug_info": "Debug mode is active"}
+        if settings.DEBUG
+        else {"message": "Debug is off"}
+    )
+
 
 app.include_router(contract.router)
 app.include_router(addendum.router)
@@ -84,7 +102,9 @@ app.include_router(exchange_rate.router)
 app.include_router(invoice.router)
 app.include_router(pdf.router)
 app.include_router(template.router)
+app.include_router(admin.router) 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)

@@ -17,14 +17,21 @@ class Invoice(Base):
     __tablename__ = "invoices"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id", ondelete="CASCADE"), nullable=False, index=True)
+    contract_id = Column(
+        Integer,
+        ForeignKey("contracts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     invoice_number = Column(String(50), unique=True, nullable=False, index=True)
     invoice_date = Column(Date, nullable=False)
     due_date = Column(Date, nullable=False)
     total_amount = Column(Numeric(15, 2), nullable=False)
 
     contract = relationship("Contract", back_populates="invoices")
-    payments = relationship("Payment", back_populates="invoice", cascade="all, delete-orphan")
+    payments = relationship(
+        "Payment", back_populates="invoice", cascade="all, delete-orphan"
+    )
 
 
 if settings.DEBUG:

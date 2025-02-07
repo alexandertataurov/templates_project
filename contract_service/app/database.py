@@ -25,6 +25,7 @@ try:
         """
         async with async_session() as session:
             yield session
+
 except Exception as e:
     logger.error("Ошибка подключения к базе данных: %s", e)
     raise

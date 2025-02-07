@@ -1,1 +1,47 @@
+# Виртуальное окружение
 venv/
+.env
+
+# Кэш и временные файлы
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.pid
+
+# Конфигурация IDE
+.vscode/
+.idea/
+*.iml
+
+# Логи и временные файлы
+logs/
+*.log
+*.out
+*.err
+
+# Базы данных
+*.sqlite3
+*.db
+
+# Docker
+docker-compose.override.yml
+*.dockerfile
+.DS_Store
+
+# Ключи и сертификаты
+*.pem
+*.crt
+*.key
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Test coverage
+.coverage
+htmlcov/
+*.cover
+.cache
+nosetests.xml
+coverage.xml
+pytest_cache/

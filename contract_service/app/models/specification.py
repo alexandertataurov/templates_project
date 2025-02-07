@@ -17,7 +17,12 @@ class Specification(Base):
     __tablename__ = "specifications"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id", ondelete="CASCADE"), nullable=False, index=True)
+    contract_id = Column(
+        Integer,
+        ForeignKey("contracts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     spec_number = Column(String(50), nullable=False, index=True)
     spec_date = Column(Date, nullable=False)
 

@@ -17,7 +17,12 @@ class Appendix(Base):
     __tablename__ = "appendices"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id", ondelete="CASCADE"), nullable=False, index=True)
+    contract_id = Column(
+        Integer,
+        ForeignKey("contracts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     appendix_number = Column(String(50), nullable=False, index=True)
     appendix_date = Column(Date, nullable=False)
     description = Column(String(255), nullable=True)

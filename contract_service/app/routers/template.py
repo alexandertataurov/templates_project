@@ -61,7 +61,7 @@ async def define_fields(fields: List[str]):
     """
     if settings.DEBUG:
         logger.debug("Debug Mode: Received fields: %s", fields)
-    
+
     try:
         result = await TemplateManager.define_fields(fields)
         logger.info("Fields defined successfully: %s", result)
@@ -110,7 +110,10 @@ async def upload_template(
     if settings.DEBUG:
         logger.debug(
             "Debug Mode: Uploading file: %s, type: %s, name: %s, fields: %s",
-            file.filename, template_type, display_name, fields
+            file.filename,
+            template_type,
+            display_name,
+            fields,
         )
 
     try:
@@ -168,14 +171,24 @@ async def delete_template(
     :return: Подтверждение удаления.
     """
     if settings.DEBUG:
-        logger.debug("Debug Mode: Deleting template Type='%s', Name='%s'", template_type, display_name)
+        logger.debug(
+            "Debug Mode: Deleting template Type='%s', Name='%s'",
+            template_type,
+            display_name,
+        )
 
     try:
         result = await TemplateManager.delete_template(template_type, display_name, db)
 
         if not result:
-            logger.warning("Template not found for deletion: Type='%s', Name='%s'", template_type, display_name)
-            raise HTTPException(status_code=404, detail=f"Шаблон '{display_name}' не найден.")
+            logger.warning(
+                "Template not found for deletion: Type='%s', Name='%s'",
+                template_type,
+                display_name,
+            )
+            raise HTTPException(
+                status_code=404, detail=f"Шаблон '{display_name}' не найден."
+            )
 
         logger.info("Template deleted successfully: %s", result)
         return result
@@ -204,4 +217,6 @@ async def list_templates(db: AsyncSession = Depends(get_db)):
         return templates
     except Exception as e:
         logger.error("Error fetching templates: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при получении списка шаблонов.")
+        raise HTTPException(
+            status_code=500, detail="Ошибка при получении списка шаблонов."
+        )
