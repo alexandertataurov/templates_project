@@ -1,12 +1,15 @@
-import json
+import json, os
 import logging
 from pathlib import Path
 from typing import Dict, List
+from uuid import uuid4
 
 import aiofiles
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.exc import SQLAlchemyError
+
 
 from app.models.template import Template
 
@@ -113,49 +116,6 @@ class TemplateManager:
         return {"fields": fields}
 
     @staticmethod
-    async def upload_template(
-        file, template_type: str, display_name: str, db: AsyncSession
-    ) -> Dict[str, str]:
-        """
-        Загружает шаблон DOCX в папку TEMPLATES_DIR и сохраняет в БД.
-        """
-        if template_type not in REQUIRED_TEMPLATES:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}",
-            )
-
-        safe_display_name = "_".join(display_name.strip().split())
-        file_name = f"{template_type}_{safe_display_name}.docx"
-        file_path = TEMPLATES_DIR / file_name
-
-        try:
-            content = await file.read()
-            async with aiofiles.open(file_path, "wb") as f:
-                await f.write(content)
-            print(f"Шаблон '{template_type}' загружен в {file_path}")
-
-            # ✅ Добавляем запись в БД
-            template_record = Template(
-                name=template_type,
-                display_name=display_name,
-                file_path=str(file_path),
-                dynamic_fields=[],  # Если есть поля, добавь их сюда
-                user_id=None,  # Если у тебя есть пользователи, сюда передаётся ID
-            )
-
-            db.add(template_record)
-            await db.commit()
-            print(f"Шаблон {template_type} сохранён в БД")
-
-            return {"message": f"Шаблон '{display_name}' загружен и сохранён!"}
-
-        except Exception as e:
-            print(f"Ошибка загрузки шаблона: {str(e)}")
-            await db.rollback()
-            raise HTTPException(status_code=500, detail="Ошибка загрузки файла")
-
-    @staticmethod
     async def list_templates(db: AsyncSession) -> List[Dict]:
         """
         Запрашивает из базы данных все шаблоны и возвращает их полную информацию.
@@ -213,6 +173,48 @@ class TemplateManager:
             )
             raise HTTPException(status_code=500, detail="Ошибка инициализации шаблонов")
 
+    async def delete_template(
+        template_type: str, display_name: str, db: AsyncSession
+    ) -> dict:
+        """
+        Удаляет шаблон из базы данных и файл по сохраненному пути.
+        """
+        try:
+            # Ищем шаблон в базе данных
+            result = await db.execute(
+                select(Template).where(
+                    Template.name == template_type,
+                    Template.display_name == display_name,
+                )
+            )
+            template = result.scalars().first()
+            
+            if not template:
+                logger.error(f"Шаблон '{display_name}' не найден в базе данных")
+                raise HTTPException(status_code=404, detail="Шаблон не найден")
+            
+            # Получаем путь к файлу из базы данных
+            file_path = template.file_path
+
+            # Удаляем шаблон из базы данных
+            await db.delete(template)
+            await db.commit()
+            
+            # Удаляем файл, если он существует
+            if file_path and os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    logger.info(f"Файл '{file_path}' успешно удален")
+                except Exception as e:
+                    logger.error(f"Ошибка удаления файла '{file_path}': {str(e)}")
+            
+            logger.info(f"Шаблон '{display_name}' удален из базы данных")
+            return {"message": f"Шаблон '{display_name}' удален из базы данных и файловой системы!"}
+        
+        except Exception as e:
+            logger.error(f"Ошибка удаления шаблона '{display_name}': {str(e)}")
+            raise HTTPException(status_code=500, detail="Ошибка удаления шаблона из базы данных")
+
     @staticmethod
     async def upload_template(
         file, template_type: str, display_name: str, fields: List[str], db: AsyncSession
@@ -227,7 +229,8 @@ class TemplateManager:
             )
 
         safe_display_name = "_".join(display_name.strip().split())
-        file_name = f"{template_type}_{safe_display_name}.docx"
+        unique_id = uuid4().hex  # Генерируем уникальный идентификатор
+        file_name = f"{template_type}_{safe_display_name}_{unique_id}.docx"
         file_path = TEMPLATES_DIR / file_name
 
         try:
@@ -255,28 +258,6 @@ class TemplateManager:
             logger.error(f"Ошибка загрузки шаблона: {str(e)}")
             await db.rollback()
             raise HTTPException(status_code=500, detail="Ошибка загрузки файла")
-
-    @staticmethod
-    async def delete_template(
-        template_type: str, display_name: str, db: AsyncSession
-    ) -> Dict[str, str]:
-        """
-        Удаляет шаблон по типу и пользовательскому названию.
-        Формирует имя файла так же, как при загрузке.
-        """
-        safe_display_name = "_".join(display_name.strip().split())
-        file_name = f"{template_type}_{safe_display_name}.docx"
-        file_path = TEMPLATES_DIR / file_name
-        if not file_path.exists():
-            logger.error(f"Шаблон '{display_name}' не найден для удаления")
-            raise HTTPException(status_code=404, detail="Шаблон не найден")
-        try:
-            file_path.unlink()
-            logger.info(f"Шаблон '{display_name}' удален из {file_path}")
-            return {"message": f"Шаблон '{display_name}' удален!"}
-        except Exception as e:
-            logger.error(f"Ошибка удаления шаблона '{display_name}': {str(e)}")
-            raise HTTPException(status_code=500, detail="Ошибка удаления шаблона")
 
     @staticmethod
     async def update_template(template_id: int, updated_data: dict, db: AsyncSession):

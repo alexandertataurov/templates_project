@@ -13,6 +13,7 @@ load_dotenv()
 class Settings(BaseSettings):
     DATABASE_URL: str
     DEBUG: bool = False
+    LOG_FILE: str = os.getenv("LOG_FILE", "logs.txt")  # ✅ Добавляем путь к логам
     DB_POOL_SIZE: int = int(
         os.getenv("DB_POOL_SIZE", 10)
     )  # ✅ Добавляем значение по умолчанию
