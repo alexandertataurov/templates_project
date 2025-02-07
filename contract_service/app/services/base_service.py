@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+
 class BaseService:
     model = None  # Этот параметр должен быть переопределен в дочерних классах
 

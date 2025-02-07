@@ -1,11 +1,13 @@
 import json
 import logging
 from pathlib import Path
-from fastapi import HTTPException
-from typing import List, Dict
+from typing import Dict, List
+
 import aiofiles
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from app.models.template import Template
 
 # === Конфигурация путей ===
@@ -22,14 +24,14 @@ REQUIRED_TEMPLATES = ["contract", "specification", "addendum"]
 DEFAULT_DYNAMIC_FIELDS = {
     "contract": ["date", "buyer", "seller"],
     "specification": ["date", "product_list", "total_amount"],
-    "addendum": ["date", "notes"]
+    "addendum": ["date", "notes"],
 }
 
 # Стандартные пользовательские названия шаблонов
 DEFAULT_DISPLAY_NAMES = {
     "contract": "Стандартный договор",
     "specification": "Стандартная спецификация",
-    "addendum": "Стандартное дополнение"
+    "addendum": "Стандартное дополнение",
 }
 
 # Создаем необходимые директории (с родительскими каталогами)
@@ -89,7 +91,7 @@ class TemplateManager:
         logger.info("Запущен процесс настройки шаблонов")
         return {
             "status": "setup_started",
-            "message": "Создайте динамические поля и загрузите шаблоны"
+            "message": "Создайте динамические поля и загрузите шаблоны",
         }
 
     @staticmethod
@@ -111,14 +113,16 @@ class TemplateManager:
         return {"fields": fields}
 
     @staticmethod
-    async def upload_template(file, template_type: str, display_name: str, db: AsyncSession) -> Dict[str, str]:
+    async def upload_template(
+        file, template_type: str, display_name: str, db: AsyncSession
+    ) -> Dict[str, str]:
         """
         Загружает шаблон DOCX в папку TEMPLATES_DIR и сохраняет в БД.
         """
         if template_type not in REQUIRED_TEMPLATES:
             raise HTTPException(
                 status_code=400,
-                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}"
+                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}",
             )
 
         safe_display_name = "_".join(display_name.strip().split())
@@ -137,7 +141,7 @@ class TemplateManager:
                 display_name=display_name,
                 file_path=str(file_path),
                 dynamic_fields=[],  # Если есть поля, добавь их сюда
-                user_id=None  # Если у тебя есть пользователи, сюда передаётся ID
+                user_id=None,  # Если у тебя есть пользователи, сюда передаётся ID
             )
 
             db.add(template_record)
@@ -150,7 +154,7 @@ class TemplateManager:
             print(f"Ошибка загрузки шаблона: {str(e)}")
             await db.rollback()
             raise HTTPException(status_code=500, detail="Ошибка загрузки файла")
-        
+
     @staticmethod
     async def list_templates(db: AsyncSession) -> List[Dict]:
         """
@@ -166,8 +170,10 @@ class TemplateManager:
                 "display_name": template.display_name,
                 "file_path": template.file_path,
                 "dynamic_fields": template.dynamic_fields,
-                "created_at": template.created_at.isoformat() if template.created_at else None,
-                "user_id": template.user_id
+                "created_at": (
+                    template.created_at.isoformat() if template.created_at else None
+                ),
+                "user_id": template.user_id,
             }
             for template in templates
         ]
@@ -189,27 +195,35 @@ class TemplateManager:
                 display_name=display_name,
                 file_path=str(file_path),
                 user_id=user_id,
-                dynamic_fields=dynamic_fields
+                dynamic_fields=dynamic_fields,
             )
             db.add(template_record)
-            logger.info(f"Подготовлена запись для шаблона '{tpl}' с названием '{display_name}' и полями {dynamic_fields}")
+            logger.info(
+                f"Подготовлена запись для шаблона '{tpl}' с названием '{display_name}' и полями {dynamic_fields}"
+            )
         try:
             await db.commit()
-            logger.info(f"Стандартные шаблоны инициализированы для пользователя {user_id}")
+            logger.info(
+                f"Стандартные шаблоны инициализированы для пользователя {user_id}"
+            )
         except Exception as e:
             await db.rollback()
-            logger.error(f"Ошибка инициализации шаблонов для пользователя {user_id}: {str(e)}")
+            logger.error(
+                f"Ошибка инициализации шаблонов для пользователя {user_id}: {str(e)}"
+            )
             raise HTTPException(status_code=500, detail="Ошибка инициализации шаблонов")
 
     @staticmethod
-    async def upload_template(file, template_type: str, display_name: str, fields: List[str], db: AsyncSession) -> Dict[str, str]:
+    async def upload_template(
+        file, template_type: str, display_name: str, fields: List[str], db: AsyncSession
+    ) -> Dict[str, str]:
         """
         Асинхронно загружает шаблон DOCX в папку TEMPLATES_DIR и сохраняет в БД.
         """
         if template_type not in REQUIRED_TEMPLATES:
             raise HTTPException(
                 status_code=400,
-                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}"
+                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}",
             )
 
         safe_display_name = "_".join(display_name.strip().split())
@@ -228,7 +242,7 @@ class TemplateManager:
                 display_name=display_name,
                 file_path=str(file_path),
                 dynamic_fields=fields,  # <-- Исправлено: сохраняем переданные поля
-                user_id=None
+                user_id=None,
             )
 
             db.add(template_record)
@@ -242,9 +256,10 @@ class TemplateManager:
             await db.rollback()
             raise HTTPException(status_code=500, detail="Ошибка загрузки файла")
 
-
     @staticmethod
-    async def delete_template(template_type: str, display_name: str) -> Dict[str, str]:
+    async def delete_template(
+        template_type: str, display_name: str, db: AsyncSession
+    ) -> Dict[str, str]:
         """
         Удаляет шаблон по типу и пользовательскому названию.
         Формирует имя файла так же, как при загрузке.
@@ -277,14 +292,23 @@ class TemplateManager:
         forbidden_fields = {"file_path", "user_id"}
 
         # Фильтруем запрещенные поля
-        filtered_data = {k: v for k, v in updated_data.items() if k not in forbidden_fields}
+        filtered_data = {
+            k: v for k, v in updated_data.items() if k not in forbidden_fields
+        }
 
         if not filtered_data:
-            logger.warning(f"Нет разрешенных данных для обновления шаблона ID {template_id}")
-            raise HTTPException(status_code=400, detail="Нет данных для обновления или запрещено изменять указанные поля.")
+            logger.warning(
+                f"Нет разрешенных данных для обновления шаблона ID {template_id}"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail="Нет данных для обновления или запрещено изменять указанные поля.",
+            )
 
         async with db.begin():
-            result = await db.execute(select(Template).where(Template.id == template_id))
+            result = await db.execute(
+                select(Template).where(Template.id == template_id)
+            )
             template = result.scalars().first()
 
             if not template:

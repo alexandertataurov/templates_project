@@ -1,8 +1,11 @@
-from pydantic import BaseModel, Field, condecimal
 from datetime import date
 from typing import Annotated
 
-PriceType = Annotated[condecimal(max_digits=10, decimal_places=2), "PriceField"]  # ✅ Правильный вариант
+from pydantic import BaseModel, Field, condecimal
+
+PriceType = Annotated[
+    condecimal(max_digits=10, decimal_places=2), "PriceField"
+]  # ✅ Правильный вариант
 
 
 class InvoiceBase(BaseModel):
@@ -13,8 +16,10 @@ class InvoiceBase(BaseModel):
     currency: str = "CNY"
     status: str = Field("pending", max_length=20)
 
+
 class InvoiceCreate(InvoiceBase):
     pass
+
 
 class InvoiceResponse(InvoiceBase):
     id: int

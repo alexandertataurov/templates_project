@@ -1,13 +1,19 @@
-from sqlalchemy import Column, Integer, String, Date, Numeric, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
+
 from app.models import Base
+
 
 class Addendum(Base):
     __tablename__ = "addendums"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id"), nullable=False, index=True)  # Индексируем contract_id
-    addendum_number = Column(String(50), nullable=False, index=True)  # Индексируем номер ДС
+    contract_id = Column(
+        Integer, ForeignKey("contracts.id"), nullable=False, index=True
+    )  # Индексируем contract_id
+    addendum_number = Column(
+        String(50), nullable=False, index=True
+    )  # Индексируем номер ДС
     addendum_date = Column(Date, nullable=False)
     invoice_number = Column(String(50), nullable=True, index=True)  # Индексируем инвойс
     invoice_amount = Column(Numeric(15, 2), nullable=True)

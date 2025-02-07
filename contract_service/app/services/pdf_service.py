@@ -1,16 +1,21 @@
-import subprocess
 import os
 import shutil
-from app.schemas.contract import ContractBase
+import subprocess
+
 from docxtpl import DocxTemplate
+
+from app.schemas.contract import ContractBase
 
 TEMPLATE_DIR = "templates/"
 OUTPUT_DIR = "generated_docs/"
 
-async def generate_contract_docx(contract_data: ContractBase, template_name: str) -> str:
+
+async def generate_contract_docx(
+    contract_data: ContractBase, template_name: str
+) -> str:
     """Generates a contract in DOCX format using a selected template."""
     template_path = os.path.join(TEMPLATE_DIR, template_name)
-    
+
     if not os.path.exists(template_path):
         raise FileNotFoundError(f"Template {template_name} not found.")
 
@@ -21,17 +26,31 @@ async def generate_contract_docx(contract_data: ContractBase, template_name: str
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    docx_path = os.path.join(OUTPUT_DIR, f"contract_{contract_data.contract_number}.docx")
+    docx_path = os.path.join(
+        OUTPUT_DIR, f"contract_{contract_data.contract_number}.docx"
+    )
     doc.save(docx_path)
 
     return docx_path
 
+
 async def convert_docx_to_pdf(docx_path: str) -> str:
     """Converts a DOCX file to PDF using LibreOffice."""
-    
+
     if not shutil.which("libreoffice"):  # ✅ Проверка наличия LibreOffice
         raise FileNotFoundError("LibreOffice is not installed or not in PATH.")
 
     pdf_path = docx_path.replace(".docx", ".pdf")
-    subprocess.run(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", OUTPUT_DIR, docx_path], check=True)
+    subprocess.run(
+        [
+            "libreoffice",
+            "--headless",
+            "--convert-to",
+            "pdf",
+            "--outdir",
+            OUTPUT_DIR,
+            docx_path,
+        ],
+        check=True,
+    )
     return pdf_path

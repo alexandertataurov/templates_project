@@ -1,8 +1,11 @@
-from pydantic import BaseModel, Field, condecimal
 from datetime import date
-from typing import Optional, Annotated
+from typing import Annotated, Optional
 
-PriceType = Annotated[condecimal(max_digits=10, decimal_places=2), "PriceField"]  # ✅ Правильный вариант
+from pydantic import BaseModel, Field, condecimal
+
+PriceType = Annotated[
+    condecimal(max_digits=10, decimal_places=2), "PriceField"
+]  # ✅ Правильный вариант
 
 
 class ContractBase(BaseModel):
@@ -43,11 +46,13 @@ class ContractBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ContractCreate(BaseModel):
     name: str
     start_date: str
     end_date: str
-    
+
+
 class ContractResponse(BaseModel):
     id: int
     name: str
@@ -55,4 +60,4 @@ class ContractResponse(BaseModel):
     end_date: str
 
     class Config:
-        orm_mode = True  # Это важно для работы с SQLAlchemy    
+        orm_mode = True  # Это важно для работы с SQLAlchemy

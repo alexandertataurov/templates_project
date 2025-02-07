@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 from datetime import date
 from decimal import Decimal
+
+from pydantic import BaseModel
+
 
 class AddendumBase(BaseModel):
     addendum_number: str
@@ -8,8 +10,10 @@ class AddendumBase(BaseModel):
     additional_amount: Decimal
     description: str | None = None
 
+
 class AddendumCreate(AddendumBase):
     pass
+
 
 class AddendumResponse(AddendumBase):
     id: int

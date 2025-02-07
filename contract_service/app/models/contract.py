@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date, Numeric, DateTime
+from sqlalchemy import Column, Date, DateTime, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from app.models import Base
+
 
 class Contract(Base):
     __tablename__ = "contracts"
@@ -46,7 +48,18 @@ class Contract(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    specifications = relationship("Specification", back_populates="contract", cascade="all, delete-orphan")
-    addendums = relationship("Addendum", back_populates="contract", cascade="all, delete-orphan")
-    appendices = relationship("Appendix", back_populates="contract", cascade="all, delete-orphan", passive_deletes=True)
-    invoices = relationship("Invoice", back_populates="contract", cascade="all, delete-orphan")
+    specifications = relationship(
+        "Specification", back_populates="contract", cascade="all, delete-orphan"
+    )
+    addendums = relationship(
+        "Addendum", back_populates="contract", cascade="all, delete-orphan"
+    )
+    appendices = relationship(
+        "Appendix",
+        back_populates="contract",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    invoices = relationship(
+        "Invoice", back_populates="contract", cascade="all, delete-orphan"
+    )

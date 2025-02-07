@@ -1,12 +1,16 @@
-from sqlalchemy import Column, Integer, String, Date, Numeric, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
+
 from app.models import Base
+
 
 class Specification(Base):
     __tablename__ = "specifications"
 
     id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(Integer, ForeignKey("contracts.id"), nullable=False, index=True)
+    contract_id = Column(
+        Integer, ForeignKey("contracts.id"), nullable=False, index=True
+    )
     spec_number = Column(String(50), nullable=False, index=True)
     spec_date = Column(Date, nullable=False)
     goods_description = Column(String(255), nullable=False)
