@@ -207,3 +207,478 @@ TypeError: TemplateManager() takes no arguments
 2025-02-27 09:46:58 - DEBUG - app.main - Registered router: PDF Export
 2025-02-27 09:46:58 - DEBUG - app.main - Registered router: Admin
 2025-02-27 09:46:58 - DEBUG - app.core.middleware - Debug middleware enabled
+2025-02-27 10:04:35 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.057s
+2025-02-27 10:04:35 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.004s
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - select pg_catalog.version()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - [raw sql] ()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - select current_schema()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - [raw sql] ()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - show standard_conforming_strings
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - [raw sql] ()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - [generated in 0.00809s] ()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:04:36 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 1.030s
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - [cached since 0.1321s ago] ()
+2025-02-27 10:04:36 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:04:36 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.061s
+2025-02-27 10:06:06 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:06:06 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:06:06 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:06:06 - INFO - sqlalchemy.engine.Engine - [cached since 89.91s ago] ()
+2025-02-27 10:06:06 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:06:06 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.022s
+2025-02-27 10:06:28 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:06:28 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:06:28 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:06:28 - INFO - sqlalchemy.engine.Engine - [cached since 111.9s ago] ()
+2025-02-27 10:06:28 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:06:28 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.020s
+2025-02-27 10:07:03 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:07:03 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:07:03 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:07:03 - INFO - sqlalchemy.engine.Engine - [cached since 146.9s ago] ()
+2025-02-27 10:07:03 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:07:03 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.022s
+2025-02-27 10:07:17 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:07:17 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:07:17 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:07:17 - INFO - sqlalchemy.engine.Engine - [cached since 160.9s ago] ()
+2025-02-27 10:07:17 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:07:17 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.016s
+2025-02-27 10:07:34 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:07:34 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:07:34 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:07:34 - INFO - sqlalchemy.engine.Engine - [cached since 177.6s ago] ()
+2025-02-27 10:07:34 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:07:34 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.018s
+2025-02-27 10:07:48 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:07:48 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:07:48 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:07:48 - INFO - sqlalchemy.engine.Engine - [cached since 191.9s ago] ()
+2025-02-27 10:07:48 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:07:48 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.017s
+2025-02-27 10:12:21 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:12:21 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:12:21 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:12:21 - INFO - sqlalchemy.engine.Engine - [cached since 464.9s ago] ()
+2025-02-27 10:12:21 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:12:21 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.033s
+2025-02-27 10:19:18 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.017s
+2025-02-27 10:19:18 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:19:18 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:19:18 - INFO - sqlalchemy.engine.Engine - [cached since 882.1s ago] ()
+2025-02-27 10:19:18 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:19:18 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.146s
+2025-02-27 10:19:20 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:19:20 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:19:20 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:19:20 - INFO - sqlalchemy.engine.Engine - [cached since 884s ago] ()
+2025-02-27 10:19:20 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:19:20 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.027s
+2025-02-27 10:19:52 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:19:52 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:19:52 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:19:52 - INFO - sqlalchemy.engine.Engine - [cached since 915.9s ago] ()
+2025-02-27 10:19:52 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:19:52 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.025s
+2025-02-27 10:20:15 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.004s
+2025-02-27 10:20:15 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:20:15 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:20:15 - INFO - sqlalchemy.engine.Engine - [cached since 938.9s ago] ()
+2025-02-27 10:20:15 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:20:15 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.023s
+2025-02-27 10:20:24 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:20:24 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:20:24 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:20:24 - INFO - sqlalchemy.engine.Engine - [cached since 947.6s ago] ()
+2025-02-27 10:20:24 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:20:24 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.016s
+2025-02-27 10:21:35 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:35 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - [cached since 1019s ago] ()
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:35 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.023s
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - [cached since 1019s ago] ()
+2025-02-27 10:21:35 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:35 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.027s
+2025-02-27 10:21:40 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:40 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:40 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:40 - INFO - sqlalchemy.engine.Engine - [cached since 1024s ago] ()
+2025-02-27 10:21:40 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:40 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.021s
+2025-02-27 10:21:43 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.005s
+2025-02-27 10:21:43 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:43 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:43 - INFO - sqlalchemy.engine.Engine - [cached since 1027s ago] ()
+2025-02-27 10:21:43 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:43 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.031s
+2025-02-27 10:21:44 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:21:44 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:44 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:44 - INFO - sqlalchemy.engine.Engine - [cached since 1028s ago] ()
+2025-02-27 10:21:44 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:44 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.045s
+2025-02-27 10:21:46 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:21:46 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:46 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:46 - INFO - sqlalchemy.engine.Engine - [cached since 1030s ago] ()
+2025-02-27 10:21:46 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:46 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.017s
+2025-02-27 10:21:48 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:48 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:48 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:48 - INFO - sqlalchemy.engine.Engine - [cached since 1032s ago] ()
+2025-02-27 10:21:48 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:48 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.017s
+2025-02-27 10:21:53 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:53 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:53 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:53 - INFO - sqlalchemy.engine.Engine - [cached since 1037s ago] ()
+2025-02-27 10:21:53 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:53 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.017s
+2025-02-27 10:21:56 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:21:56 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:56 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:56 - INFO - sqlalchemy.engine.Engine - [cached since 1040s ago] ()
+2025-02-27 10:21:56 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:56 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.016s
+2025-02-27 10:21:57 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:21:57 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:57 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:57 - INFO - sqlalchemy.engine.Engine - [cached since 1041s ago] ()
+2025-02-27 10:21:57 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:57 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.015s
+2025-02-27 10:21:59 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:21:59 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:21:59 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:21:59 - INFO - sqlalchemy.engine.Engine - [cached since 1043s ago] ()
+2025-02-27 10:21:59 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:21:59 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.012s
+2025-02-27 10:22:01 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:22:01 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:22:01 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:22:01 - INFO - sqlalchemy.engine.Engine - [cached since 1045s ago] ()
+2025-02-27 10:22:01 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:22:01 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.018s
+2025-02-27 10:22:03 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:22:03 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:22:03 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:22:03 - INFO - sqlalchemy.engine.Engine - [cached since 1047s ago] ()
+2025-02-27 10:22:03 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:22:03 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.015s
+2025-02-27 10:31:41 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.015s
+2025-02-27 10:31:41 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:31:41 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:31:41 - INFO - sqlalchemy.engine.Engine - [cached since 1625s ago] ()
+2025-02-27 10:31:41 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:31:41 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.178s
+2025-02-27 10:31:46 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:31:46 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:31:46 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:31:46 - INFO - sqlalchemy.engine.Engine - [cached since 1630s ago] ()
+2025-02-27 10:31:46 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:31:46 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.031s
+2025-02-27 10:33:42 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.004s
+2025-02-27 10:33:42 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:33:42 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:33:42 - INFO - sqlalchemy.engine.Engine - [cached since 1746s ago] ()
+2025-02-27 10:33:42 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:33:42 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.073s
+2025-02-27 10:33:44 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.007s
+2025-02-27 10:33:44 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:33:44 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:33:44 - INFO - sqlalchemy.engine.Engine - [cached since 1748s ago] ()
+2025-02-27 10:33:44 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:33:44 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.030s
+2025-02-27 10:33:45 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:33:45 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:33:45 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:33:45 - INFO - sqlalchemy.engine.Engine - [cached since 1749s ago] ()
+2025-02-27 10:33:45 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:33:45 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.034s
+2025-02-27 10:33:53 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:33:53 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:33:53 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:33:53 - INFO - sqlalchemy.engine.Engine - [cached since 1757s ago] ()
+2025-02-27 10:33:53 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:33:53 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.044s
+2025-02-27 10:34:09 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:34:09 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:09 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:09 - INFO - sqlalchemy.engine.Engine - [cached since 1773s ago] ()
+2025-02-27 10:34:09 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:09 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.030s
+2025-02-27 10:34:14 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:34:14 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:14 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:14 - INFO - sqlalchemy.engine.Engine - [cached since 1778s ago] ()
+2025-02-27 10:34:14 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:14 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.028s
+2025-02-27 10:34:18 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:34:18 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:18 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:18 - INFO - sqlalchemy.engine.Engine - [cached since 1782s ago] ()
+2025-02-27 10:34:18 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:18 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.025s
+2025-02-27 10:34:20 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.003s
+2025-02-27 10:34:20 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:20 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:20 - INFO - sqlalchemy.engine.Engine - [cached since 1784s ago] ()
+2025-02-27 10:34:20 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:20 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.039s
+2025-02-27 10:34:22 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:34:22 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:22 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:22 - INFO - sqlalchemy.engine.Engine - [cached since 1786s ago] ()
+2025-02-27 10:34:22 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:22 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.034s
+2025-02-27 10:34:26 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:34:26 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:26 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:26 - INFO - sqlalchemy.engine.Engine - [cached since 1790s ago] ()
+2025-02-27 10:34:26 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:26 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.023s
+2025-02-27 10:34:33 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:34:33 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:33 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:33 - INFO - sqlalchemy.engine.Engine - [cached since 1797s ago] ()
+2025-02-27 10:34:33 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:33 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.026s
+2025-02-27 10:34:39 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.005s
+2025-02-27 10:34:39 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:39 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:39 - INFO - sqlalchemy.engine.Engine - [cached since 1803s ago] ()
+2025-02-27 10:34:39 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:39 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.029s
+2025-02-27 10:34:45 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:34:45 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:34:45 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:34:45 - INFO - sqlalchemy.engine.Engine - [cached since 1809s ago] ()
+2025-02-27 10:34:45 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:34:45 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.040s
+2025-02-27 10:35:51 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.007s
+2025-02-27 10:35:51 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:35:51 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:35:51 - INFO - sqlalchemy.engine.Engine - [cached since 1875s ago] ()
+2025-02-27 10:35:51 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:35:51 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.066s
+2025-02-27 10:36:03 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.005s
+2025-02-27 10:36:03 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:36:03 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:36:03 - INFO - sqlalchemy.engine.Engine - [cached since 1887s ago] ()
+2025-02-27 10:36:03 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:36:03 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.028s
+2025-02-27 10:36:07 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:36:07 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:36:07 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:36:07 - INFO - sqlalchemy.engine.Engine - [cached since 1891s ago] ()
+2025-02-27 10:36:07 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:36:07 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.022s
+2025-02-27 10:36:10 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.004s
+2025-02-27 10:36:10 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:36:10 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:36:10 - INFO - sqlalchemy.engine.Engine - [cached since 1894s ago] ()
+2025-02-27 10:36:10 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:36:10 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.039s
+2025-02-27 10:36:59 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:36:59 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:36:59 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:36:59 - INFO - sqlalchemy.engine.Engine - [cached since 1943s ago] ()
+2025-02-27 10:36:59 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:36:59 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.032s
+2025-02-27 10:37:20 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:37:20 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:37:20 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:37:20 - INFO - sqlalchemy.engine.Engine - [cached since 1964s ago] ()
+2025-02-27 10:37:20 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:37:20 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.032s
+2025-02-27 10:37:34 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.004s
+2025-02-27 10:37:34 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:37:34 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:37:34 - INFO - sqlalchemy.engine.Engine - [cached since 1978s ago] ()
+2025-02-27 10:37:34 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:37:34 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.029s
+2025-02-27 10:37:58 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.000s
+2025-02-27 10:37:58 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:37:58 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:37:58 - INFO - sqlalchemy.engine.Engine - [cached since 2002s ago] ()
+2025-02-27 10:37:58 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:37:58 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.027s
+2025-02-27 10:39:11 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:39:11 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:39:11 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:39:11 - INFO - sqlalchemy.engine.Engine - [cached since 2075s ago] ()
+2025-02-27 10:39:11 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:39:11 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.031s
+2025-02-27 10:45:54 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.065s
+2025-02-27 10:45:54 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.010s
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - [cached since 2478s ago] ()
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:45:54 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.384s
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - [cached since 2478s ago] ()
+2025-02-27 10:45:54 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:45:54 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.074s
+2025-02-27 10:51:27 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.024s
+2025-02-27 10:51:27 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - [cached since 2812s ago] ()
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:51:28 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.263s
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - [cached since 2812s ago] ()
+2025-02-27 10:51:28 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:51:28 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.036s
+2025-02-27 10:52:28 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 10:52:28 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:52:28 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:52:28 - INFO - sqlalchemy.engine.Engine - [cached since 2872s ago] ()
+2025-02-27 10:52:28 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:52:28 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.031s
+2025-02-27 10:52:36 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:52:36 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:52:36 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:52:36 - INFO - sqlalchemy.engine.Engine - [cached since 2880s ago] ()
+2025-02-27 10:52:36 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:52:36 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.030s
+2025-02-27 10:52:41 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 10:52:41 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:52:41 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:52:41 - INFO - sqlalchemy.engine.Engine - [cached since 2885s ago] ()
+2025-02-27 10:52:41 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:52:41 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.022s
+2025-02-27 10:58:25 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.067s
+2025-02-27 10:58:25 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.134s
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - [cached since 3229s ago] ()
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:58:25 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.271s
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - [cached since 3229s ago] ()
+2025-02-27 10:58:25 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 10:58:25 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.058s
+2025-02-27 11:01:52 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.003s
+2025-02-27 11:01:52 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:01:52 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:01:52 - INFO - sqlalchemy.engine.Engine - [cached since 3436s ago] ()
+2025-02-27 11:01:52 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:01:52 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.046s
+2025-02-27 11:01:56 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 11:01:56 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:01:56 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:01:56 - INFO - sqlalchemy.engine.Engine - [cached since 3440s ago] ()
+2025-02-27 11:01:56 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:01:56 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.030s
+2025-02-27 11:02:10 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.001s
+2025-02-27 11:02:10 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:02:10 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:02:10 - INFO - sqlalchemy.engine.Engine - [cached since 3454s ago] ()
+2025-02-27 11:02:10 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:02:10 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.032s
+2025-02-27 11:43:00 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.039s
+2025-02-27 11:43:00 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:43:00 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:43:00 - INFO - sqlalchemy.engine.Engine - [cached since 5904s ago] ()
+2025-02-27 11:43:00 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:43:00 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.211s
+2025-02-27 11:43:12 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.002s
+2025-02-27 11:43:12 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:43:12 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:43:12 - INFO - sqlalchemy.engine.Engine - [cached since 5916s ago] ()
+2025-02-27 11:43:12 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:43:12 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.030s
+2025-02-27 11:53:54 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.018s
+2025-02-27 11:53:54 - DEBUG - app.core.middleware - Request: GET /templates - Time: 0.007s
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - [cached since 6558s ago] ()
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:53:54 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.227s
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - BEGIN (implicit)
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - SELECT templates.template_type, templates.display_name, templates.fields, templates.file_path, templates.user_id, templates.id, templates.created_at, templates.updated_at 
+FROM templates ORDER BY templates.created_at DESC
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - [cached since 6558s ago] ()
+2025-02-27 11:53:54 - INFO - sqlalchemy.engine.Engine - ROLLBACK
+2025-02-27 11:53:54 - DEBUG - app.core.middleware - Request: GET /templates/ - Time: 0.041s

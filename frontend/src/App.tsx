@@ -1,13 +1,13 @@
 import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
-import Navbar from "./components/ui/Navbar";
+import Navbar from "./components/ui/NavBar";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // Import the React 19 compatibility patch for antd v5
 import "@ant-design/v5-patch-for-react-19";
 
-const TemplateManager = lazy(() => import("./components/TemplateManager"));
+const TemplateManager = lazy(() => import("./components/TemplateManager/TemplateManager"));
 const TemplateUploader = lazy(() => import("./components/TemplateUploader"));
 
 const App: React.FC = () => {

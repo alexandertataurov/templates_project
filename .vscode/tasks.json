@@ -17,7 +17,7 @@
 	  {
 		"label": "Frontend: Run Vite",
 		"type": "shell",
-		"command": "vite",
+		"command": "npm run dev",
 		"options": {
 		  "cwd": "${workspaceFolder}/frontend"
 		},
