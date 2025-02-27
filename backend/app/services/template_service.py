@@ -191,9 +191,7 @@ class TemplateManager:
             raise
 
     @classmethod
-    async def create_template(
-        cls, db: AsyncSession, template_data: Dict[str, Any]
-    ) -> Template:
+    async def create_template(cls, db: AsyncSession, template_data: Dict[str, Any]) -> Template:
         """Создает новый шаблон."""
         try:
             # Validate required fields
@@ -214,9 +212,8 @@ class TemplateManager:
             if not isinstance(fields, list):
                 fields = []
 
-            # Create new template instance
+            # Create new template instance without passing a 'name' field
             new_template = Template(
-                name=template_data["display_name"],  # Use display_name as name
                 template_type=template_data["template_type"],
                 display_name=template_data["display_name"],
                 fields=fields,
@@ -233,6 +230,7 @@ class TemplateManager:
         except Exception as e:
             await db.rollback()
             raise
+
 
     @classmethod
     async def _save_template_file(cls, file: UploadFile) -> str:

@@ -1,33 +1,27 @@
 @import "tailwindcss";
 
-/* Base styles and CSS variables */
+/* Base styles aligned with Ant Design */
 @layer base {
   :root {
-    --font-sans: 'Inter', sans-serif;
-
-    /* Core colors */
-    --color-text: #333333;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --color-text: #000000d9;
     --color-bg: #ffffff;
-    --color-save: #4285f4;    /* Blue */
-    --color-update: #34a853;  /* Green */
-    --color-delete: #ea4335;  /* Red */
-    --color-border: #d1d5db;  /* Gray-300 */
-    --color-placeholder: #9ca3af; /* Gray-400 */
-    --color-secondary: #657786; /* Gray-600 */
-
-    /* Shadows */
-    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-medium: 0 2px 6px rgba(0, 0, 0, 0.15);
-
-    /* Focus rings */
-    --focus-ring-save: 0 0 0 3px rgba(66, 133, 244, 0.4);
-    --focus-ring-update: 0 0 0 3px rgba(52, 168, 83, 0.3);
-    --focus-ring-delete: 0 0 0 3px rgba(234, 67, 53, 0.3);
+    --color-save: #1677ff;
+    --color-update: #52c41a;
+    --color-delete: #ff4d4f;
+    --color-border: #d9d9d9;
+    --color-placeholder: #bfbfbf;
+    --color-secondary: #8c8c8c;
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --focus-ring-save: 0 0 0 2px rgba(22, 119, 255, 0.2);
+    --focus-ring-update: 0 0 0 2px rgba(82, 196, 26, 0.2);
+    --focus-ring-delete: 0 0 0 2px rgba(255, 77, 79, 0.2);
   }
 
   html {
     font-family: var(--font-sans);
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.5715;
     background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -43,23 +37,23 @@
   a {
     color: var(--color-save);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.3s ease;
   }
   a:hover {
-    color: var(--color-secondary);
+    color: #40a9ff;
   }
 
   h1 {
-    @apply text-3xl font-bold mb-6;
+    @apply text-[24px] font-semibold mb-6;
   }
 
   button {
-    @apply rounded px-6 py-2 font-medium shadow-sm;
+    @apply rounded-[6px] px-4 py-1 font-medium shadow-sm;
     border: 1px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
   }
   button:hover {
-    box-shadow: var(--shadow-medium);
+    box-shadow: var(--shadow-light);
   }
   button:focus {
     outline: none;

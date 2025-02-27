@@ -1,4 +1,5 @@
 import { axiosInstance } from './axios';
+import axios from 'axios';
 
 /**
  * Template interface for the UI using camelCase keys.
@@ -90,7 +91,21 @@ export const updateTemplate = async (
     formData.append('fields', JSON.stringify(updates.fields));
   }
 
-  await axiosInstance.post('/templates/update', formData);
+
+  try {
+    await axiosInstance.post('/templates/update', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Force correct content type
+      },
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Update failed with response:', error.response?.data);
+    } else {
+      console.error('Update failed with an unknown error:', error);
+    }
+    throw error;
+  }
 };
 
 /**

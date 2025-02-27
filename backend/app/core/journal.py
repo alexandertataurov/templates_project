@@ -5,6 +5,7 @@ Audit logging and journaling functionality.
 from datetime import datetime
 from typing import Any, Dict, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.models.journal import JournalEntry
 from .logging import get_logger
 

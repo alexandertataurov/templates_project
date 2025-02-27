@@ -2,26 +2,26 @@
 
 @layer components {
   .template-manager {
-    @apply p-6 rounded-lg shadow bg-white mb-10;
+    @apply p-6 rounded-[6px] shadow bg-white mb-6;
   }
   .template-manager__title {
-    @apply text-2xl font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2;
+    @apply text-[20px] font-semibold mb-4 text-gray-800 border-b border-[var(--color-border)] pb-2;
   }
   .template-manager__controls {
     @apply flex flex-col sm:flex-row items-center justify-between mb-4 gap-4;
   }
   .template-manager__search-input {
-    @apply rounded px-4 py-2 flex-1 shadow-inner bg-white border border-[var(--color-border)];
-    transition: all 0.2s;
+    @apply rounded-[6px] px-4 py-[5.5px] flex-1 bg-white border border-[var(--color-border)];
+    transition: all 0.3s ease;
   }
   .template-manager__search-input:focus {
-    @apply border-[var(--color-save)] ring-2 ring-[var(--color-save)/20];
+    @apply border-[var(--color-save)] shadow-[var(--focus-ring-save)];
   }
   .template-manager__loading {
     @apply flex items-center justify-center;
   }
   .template-manager__error {
-    @apply text-red-500;
+    @apply text-[var(--color-delete)];
   }
   .template-manager__no-results {
     @apply text-gray-500;
@@ -30,37 +30,31 @@
     @apply overflow-x-auto;
   }
   .template-manager__table {
-    @apply min-w-full shadow;
+    @apply min-w-full border border-[var(--color-border)];
   }
   .template-manager__th,
   .template-manager__td {
-    @apply px-4 py-2;
+    @apply px-4 py-2 border-b border-[var(--color-border)];
   }
   .template-manager__input {
-    @apply rounded px-4 py-2 shadow-inner bg-white border border-[var(--color-border)];
-    transition: all 0.2s;
+    @apply rounded-[6px] px-4 py-[5.5px] bg-white border border-[var(--color-border)];
+    transition: all 0.3s ease;
   }
   .template-manager__input:focus {
-    @apply border-[var(--color-save)] ring-2 ring-[var(--color-save)/20];
-  }
-  .template-manager__input--flex {
-    @apply flex-1;
+    @apply border-[var(--color-save)] shadow-[var(--focus-ring-save)];
   }
   .template-manager__tags {
     @apply flex flex-wrap gap-3;
   }
   .template-manager__tag {
-    @apply flex items-center gap-2 px-3 py-1 rounded-full text-gray-800 shadow-sm bg-gray-100;
-    transition: background-color 0.2s;
+    @apply flex items-center gap-2 px-3 py-0.5 rounded-[4px] text-[12px] text-gray-800 bg-[#fafafa] border border-[var(--color-border)];
+    transition: all 0.3s ease;
   }
   .template-manager__tag:hover {
-    @apply bg-gray-200;
-  }
-  .template-manager__tag:focus-within {
-    @apply ring-2 ring-[var(--color-save)/20];
+    @apply bg-[#f5f5f5];
   }
   .template-manager__tag-close {
-    @apply ml-2 flex items-center justify-center w-6 h-6 text-red-500 font-bold rounded-full cursor-pointer transition-colors duration-200 hover:text-red-600;
+    @apply ml-1 flex items-center justify-center w-4 h-4 text-[var(--color-delete)] rounded-full cursor-pointer hover:text-[#ff7875];
   }
   .template-manager__field-add {
     @apply flex gap-3 mt-3;
@@ -69,6 +63,6 @@
     @apply flex gap-3;
   }
   .template-manager__link {
-    @apply text-blue-500 underline transition-colors duration-200 hover:text-[var(--color-secondary)];
+    @apply text-[var(--color-save)] hover:text-[#40a9ff] transition-colors duration-300;
   }
 }

@@ -1,12 +1,12 @@
 import React, { useState, useCallback, ChangeEvent, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { message, Input as AntInput, Button as AntButton } from "antd";
-import useTemplates from "../../hooks/useTemplates";
-import ErrorBoundary from "../ErrorBoundary";
+import useTemplates from "../../../hooks/useTemplates";
+import ErrorBoundary from "../../ErrorBoundary";
 import TemplateTable from "./TemplateTable";
-import { Template } from "../../types/template";
-import { updateTemplate, deleteTemplate } from "../../api/templates";
-import { useDebouncedValue } from "../../hooks/useDebounceValue";
+import { Template } from "../../../types/template";
+import { updateTemplate, deleteTemplate } from "../../../api/templates";
+import { useDebouncedValue } from "../../../hooks/useDebounceValue";
 
 const TemplateManager: React.FC = () => {
   const { templates, loading, error, fetchTemplates } = useTemplates();
@@ -90,7 +90,6 @@ const TemplateManager: React.FC = () => {
       setEditDynamicFields(editDynamicFields.filter((f) => f !== field)),
     onSetNewEditField: setNewEditField,
     onUpdate: (template: Template) => handleRowAction(template, "update"),
-    isEditing: editingTemplateId !== null,
     onEdit: (template: Template) => handleRowAction(template, "edit"),
     onDelete: (id: number) => handleRowAction({ id } as Template, "delete"),
     onCancelEdit: () => setEditingTemplateId(null),
@@ -166,8 +165,9 @@ const TemplateManager: React.FC = () => {
             <TemplateTable
               templates={filteredTemplates}
               rowProps={rowProps}
+              editingTemplateId={editingTemplateId} // Pass this
               onRowAction={handleRowAction}
-            />
+              />
           )}
         </AnimatePresence>
       </motion.div>

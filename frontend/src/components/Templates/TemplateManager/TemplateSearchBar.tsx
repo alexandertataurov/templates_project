@@ -10,13 +10,14 @@ interface TemplateSearchBarProps {
 }
 
 const TemplateSearchBar: React.FC<TemplateSearchBarProps> = ({ searchQuery, onSearchChange, onRefresh }) => (
-  <div className="template-search-bar">
+  <div className="template-manager__controls">
     <AntInput
       prefix={<SearchOutlined />}
       placeholder="Поиск шаблонов..."
       value={searchQuery}
       onChange={onSearchChange}
       size="large"
+      className="template-manager__search-input"
       aria-label="Search Templates"
     />
     <AntButton type="primary" size="large" onClick={onRefresh} aria-label="Refresh Templates">

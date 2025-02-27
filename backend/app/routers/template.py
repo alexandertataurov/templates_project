@@ -80,6 +80,7 @@ async def extract_fields_endpoint(file: UploadFile = File(...)):
         logger.debug(
             "Received file for field extraction: %s (type: %s)",
             file.filename,
+            
             file.content_type,
         )
 
@@ -100,13 +101,14 @@ async def extract_fields_endpoint(file: UploadFile = File(...)):
         )
 
 
-@router.post("/templates/update")
+@router.post("/update")
 async def update_template(
     template_id: int = Form(...),
     display_name: Optional[str] = Form(None),
     fields: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db),
 ):
+    
     """Обновляет существующий шаблон."""
     try:
         logger.info("Received update request for template %d", template_id)

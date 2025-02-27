@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button as AntButton, Input as AntInput } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { Template } from "../../types/template";
+import { Template } from "../../../types/template";
 
 export interface TemplateRowProps {
   template: Template;
@@ -60,9 +60,9 @@ const TemplateRow: React.FC<TemplateRowProps> = ({
       whileHover={{ backgroundColor: "#f9fafb" }}
       transition={{ duration: 0.3 }}
     >
-      <td>{template.id}</td>
-      <td>{template.templateType || "contract"}</td>
-      <td>
+      <td className="template-manager__td">{template.id}</td>
+      <td className="template-manager__td">{template.templateType || "contract"}</td>
+      <td className="template-manager__td">
         {isEditing ? (
           <AntInput
             value={editDisplayName}
@@ -74,14 +74,14 @@ const TemplateRow: React.FC<TemplateRowProps> = ({
           template.displayName
         )}
       </td>
-      <td>
+      <td className="template-manager__td">
         {isEditing ? (
           <div>
-            <div>
+            <div className="template-manager__tags">
               {editDynamicFields.map((field, idx) => (
                 <motion.span
                   key={`${template.id}-${idx}`}
-                  className={tagColors[idx % tagColors.length]}
+                  className={`template-manager__tag ${tagColors[idx % tagColors.length]}`}
                   initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.9 }}
@@ -91,19 +91,21 @@ const TemplateRow: React.FC<TemplateRowProps> = ({
                     type="button"
                     onClick={() => onRemoveEditField(field)}
                     aria-label={`Remove field ${field}`}
+                    className="template-manager__tag-close"
                   >
                     ×
                   </button>
                 </motion.span>
               ))}
             </div>
-            <div>
+            <div className="template-manager__field-add">
               <AntInput
                 value={newEditField}
                 onChange={(e) => onSetNewEditField(e.target.value)}
                 onPressEnter={onAddEditField}
                 placeholder="Новое поле"
                 aria-label="New Field Input"
+                className="template-manager__input"
               />
               <AntButton
                 type="primary"
@@ -114,25 +116,25 @@ const TemplateRow: React.FC<TemplateRowProps> = ({
             </div>
           </div>
         ) : (
-          <div>
+          <div className="template-manager__tags">
             {parseDynamicFields(template.fields).map((field, idx) => (
-              <span key={`${template.id}-${idx}`} className={tagColors[idx % tagColors.length]}>
+              <span key={`${template.id}-${idx}`} className={`template-manager__tag ${tagColors[idx % tagColors.length]}`}>
                 {field}
               </span>
             ))}
           </div>
         )}
       </td>
-      <td>
+      <td className="template-manager__td">
         {isEditing ? (
-          <div>
+          <div className="template-manager__actions">
             <AntButton type="primary" onClick={() => onUpdate(template)}>
               Сохранить
             </AntButton>
             <AntButton onClick={onCancelEdit}>Отмена</AntButton>
           </div>
         ) : (
-          <div>
+          <div className="template-manager__actions">
             <AntButton
               type="primary"
               onClick={() => onEdit(template)}
