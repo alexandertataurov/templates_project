@@ -1,34 +1,42 @@
 """
-Модель приложений (Appendices).
+Appendix model definition.
 """
 
-import logging
-from sqlalchemy import Column, Date, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-from app.config import settings
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .contract import Contract
+
+from datetime import date
+from typing import Optional
+from sqlalchemy import String, Date, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .base import Base
 
 
 class Appendix(Base):
-    """Модель приложения."""
+    """
+    Appendix model representing contract attachments.
+
+    Attributes:
+        contract_id: Associated contract identifier
+        appendix_number: Unique appendix identifier
+        appendix_date: Date of attachment
+        description: Appendix description
+    """
 
     __tablename__ = "appendices"
 
-    id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(
-        Integer,
-        ForeignKey("contracts.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
+    # Relationship fields
+    contract_id: Mapped[int] = mapped_column(
+        ForeignKey("contracts.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    appendix_number = Column(String(50), nullable=False, index=True)
-    appendix_date = Column(Date, nullable=False)
-    description = Column(String(255), nullable=True)
 
-    contract = relationship("Contract", back_populates="appendices")
+    # Appendix details
+    appendix_number: Mapped[str] = mapped_column(String(50), index=True, nullable=False)
+    appendix_date: Mapped[date] = mapped_column(Date, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(String(255))
 
-
-if settings.DEBUG:
-    logger.debug("Модель Appendix загружена")
+    # Relationships
+    contract: Mapped["Contract"] = relationship(back_populates="appendices")

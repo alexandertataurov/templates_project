@@ -1,36 +1,46 @@
 """
-Модель дополнительного соглашения (Addendum).
+Addendum model definition.
 """
 
-import logging
-from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-from app.config import settings
+from __future__ import annotations
+from datetime import date
+from decimal import Decimal
+from typing import Optional, TYPE_CHECKING
+from sqlalchemy import String, Date, Numeric, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .base import Base
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .contract import Contract
 
 
 class Addendum(Base):
-    """Модель дополнительного соглашения."""
+    """
+    Addendum model representing contract amendments.
+
+    Attributes:
+        contract_id: Associated contract identifier
+        addendum_number: Unique addendum identifier
+        addendum_date: Date of amendment
+        invoice_details: Related invoice information
+        description: Amendment description
+    """
 
     __tablename__ = "addendums"
 
-    id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(
-        Integer,
-        ForeignKey("contracts.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
+    # Relationship fields
+    contract_id: Mapped[int] = mapped_column(
+        ForeignKey("contracts.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    addendum_number = Column(String(50), nullable=False, index=True)
-    addendum_date = Column(Date, nullable=False)
-    invoice_number = Column(String(50), nullable=True, index=True)
-    invoice_amount = Column(Numeric(15, 2), nullable=True)
-    description = Column(String(255), nullable=True)
 
-    contract = relationship("Contract", back_populates="addendums")
+    # Addendum details
+    addendum_number: Mapped[str] = mapped_column(String(50), index=True, nullable=False)
+    addendum_date: Mapped[date] = mapped_column(Date, nullable=False)
 
+    # Invoice details
+    invoice_number: Mapped[Optional[str]] = mapped_column(String(50), index=True)
+    invoice_amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(15, 2))
+    description: Mapped[Optional[str]] = mapped_column(String(255))
 
-if settings.DEBUG:
-    logger.debug("Модель Addendum загружена")
+    # Relationships
+    contract: Mapped["Contract"] = relationship(back_populates="addendums")

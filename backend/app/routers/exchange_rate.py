@@ -1,40 +1,44 @@
 """
-Маршруты для управления курсами обмена валют.
+Exchange rate management endpoints.
 """
 
-import logging
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
-from app.services.exchange_rate_service import update_contract_exchange_rate
-from app.config import settings
+from decimal import Decimal
+from fastapi import APIRouter, HTTPException
+from app.services import exchange_rate_service
+from .base import DbSession, ContractId
 
-logger = logging.getLogger(__name__)
-
-router = APIRouter(prefix="/exchange-rate", tags=["Exchange Rate"])
+router = APIRouter(prefix="/exchange-rate", tags=["Exchange Rates"])
 
 
-@router.put("/contract/{contract_id}")
+@router.put(
+    "/contract/{contract_id}",
+    summary="Update contract exchange rate",
+    description="Update the exchange rate for a specific contract",
+)
 async def update_contract_rate(
-    contract_id: int, new_rate: float, db: AsyncSession = Depends(get_db)
-):
+    contract_id: ContractId, new_rate: Decimal, db: DbSession
+) -> dict:
     """
-    Обновить курс валюты в контракте.
-    """
-    if settings.DEBUG:
-        logger.debug(
-            "Обновление курса валюты для контракта %d, новый курс: %f",
-            contract_id,
-            new_rate,
-        )
+    Update contract exchange rate.
 
+    Args:
+        contract_id: Contract ID
+        new_rate: New exchange rate value
+        db: Database session
+
+    Returns:
+        Updated exchange rate info
+
+    Raises:
+        HTTPException: If rate is invalid or contract not found
+    """
     if new_rate <= 0:
-        logger.warning("Попытка установить некорректный курс: %f", new_rate)
         raise HTTPException(status_code=400, detail="Exchange rate must be positive")
 
-    contract = await update_contract_exchange_rate(db, contract_id, new_rate)
+    contract = await exchange_rate_service.update_contract_rate(
+        db, contract_id, new_rate
+    )
     if not contract:
-        logger.warning("Контракт %d не найден", contract_id)
         raise HTTPException(status_code=404, detail="Contract not found")
 
     return {"contract_id": contract_id, "new_exchange_rate": new_rate}

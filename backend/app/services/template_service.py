@@ -1,15 +1,21 @@
-import json, os
+"""
+Сервис для управления шаблонами документов.
+"""
+
+import json
+import os
 import logging
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional, Any
 from uuid import uuid4
 
 import aiofiles
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from sqlalchemy import select, text
 
 from app.models.template import Template
+from app.services.field_extractor import extract_dynamic_fields
 
 # === Конфигурация путей ===
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,286 +25,257 @@ FIELDS_FILE = TEMPLATES_DIR / "fields.json"
 PRESETS_FILE = BASE_DIR / "assets" / "presets.json"
 
 # Разрешённые типы шаблонов
-REQUIRED_TEMPLATES = ["contract", "specification", "addendum"]
+REQUIRED_TEMPLATES = {"contract", "specification", "addendum"}
 
-# Стандартный набор динамических полей для каждого шаблона
-DEFAULT_DYNAMIC_FIELDS = {
+# Стандартный набор динамических полей
+DEFAULT_DYNAMIC_FIELDS: Dict[str, List[str]] = {
     "contract": ["date", "buyer", "seller"],
     "specification": ["date", "product_list", "total_amount"],
     "addendum": ["date", "notes"],
 }
 
-# Стандартные пользовательские названия шаблонов
-DEFAULT_DISPLAY_NAMES = {
+# Стандартные пользовательские названия
+DEFAULT_DISPLAY_NAMES: Dict[str, str] = {
     "contract": "Стандартный договор",
     "specification": "Стандартная спецификация",
     "addendum": "Стандартное дополнение",
 }
 
-# Создаем необходимые директории (с родительскими каталогами)
+# Создание директорий
 TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
 GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class TemplateManager:
-    """Сервис для работы с шаблонами, пресетами и их инициализацией в БД"""
+    """Сервис для работы с шаблонами, пресетами и их инициализацией в БД."""
+
+    UPLOAD_DIR = "app/assets/templates"
 
     @staticmethod
-    async def read_json(file_path: Path, default=None) -> Dict:
-        """Асинхронно читает JSON-файл и возвращает данные или значение по умолчанию."""
-        if file_path.exists():
-            try:
-                async with aiofiles.open(file_path, mode="r", encoding="utf-8") as f:
-                    contents = await f.read()
-                return json.loads(contents)
-            except json.JSONDecodeError:
-                logger.error(f"Ошибка декодирования JSON: {file_path}")
-                return default or {}
-            except Exception as e:
-                logger.error(f"Ошибка чтения JSON: {file_path} - {str(e)}")
-                return default or {}
-        return default or {}
+    async def read_json(file_path: Path, default: Optional[Dict] = None) -> Dict:
+        """Асинхронно читает JSON-файл."""
+        if not file_path.exists():
+            return default or {}
+        try:
+            async with aiofiles.open(file_path, mode="r", encoding="utf-8") as f:
+                return json.loads(await f.read())
+        except (json.JSONDecodeError, Exception) as e:
+            logger.error("Ошибка чтения JSON %s: %s", file_path, str(e))
+            return default or {}
 
     @staticmethod
-    async def write_json(file_path: Path, data: Dict):
+    async def write_json(file_path: Path, data: Dict) -> None:
         """Асинхронно записывает данные в JSON-файл."""
         try:
             async with aiofiles.open(file_path, mode="w", encoding="utf-8") as f:
                 await f.write(json.dumps(data, ensure_ascii=False, indent=4))
         except Exception as e:
-            logger.error(f"Ошибка записи JSON: {file_path} - {str(e)}")
+            logger.error("Ошибка записи JSON %s: %s", file_path, str(e))
             raise HTTPException(status_code=500, detail="Ошибка сохранения данных")
 
     @staticmethod
     async def check_status() -> Dict[str, str]:
-        """
-        Проверяет, загружен ли хотя бы один шаблон в файловой системе.
-        Если да, возвращает статус "ready", иначе — "need_setup".
-        """
+        """Проверяет наличие шаблонов в файловой системе."""
         templates = [f.stem for f in TEMPLATES_DIR.glob("*.docx")]
-        if templates:
-            logger.info(f"Найдено {len(templates)} шаблон(ов): {templates}")
-            return {"status": "ready", "message": "Найден хотя бы один шаблон"}
-        logger.info("Шаблоны не найдены")
-        return {"status": "need_setup", "message": "Необходима настройка шаблонов"}
+        status = "ready" if templates else "need_setup"
+        logger.info("Статус проверки: %s, найдено шаблонов: %d", status, len(templates))
+        return {
+            "status": status,
+            "message": f"{'Найден хотя бы один шаблон' if templates else 'Необходима настройка шаблонов'}",
+        }
 
     @staticmethod
     async def start_setup() -> Dict[str, str]:
         """Запускает процесс настройки шаблонов."""
-        logger.info("Запущен процесс настройки шаблонов")
+        logger.info("Начало настройки шаблонов")
         return {
             "status": "setup_started",
-            "message": "Создайте динамические поля и загрузите шаблоны",
+            "message": "Создайте поля и загрузите шаблоны",
         }
 
     @staticmethod
     async def define_fields(fields: List[str]) -> Dict[str, str]:
-        """Сохраняет список динамических полей в JSON-файл."""
+        """Сохраняет список динамических полей."""
         await TemplateManager.write_json(FIELDS_FILE, {"fields": fields})
-        logger.info("Динамические поля сохранены в JSON")
+        logger.info("Динамические поля сохранены: %s", fields)
         return {"message": "Динамические поля сохранены"}
 
     @staticmethod
     async def get_instruction() -> Dict[str, List[str]]:
-        """
-        Возвращает список динамических полей из файла FIELDS_FILE.
-        Окончательное форматирование поручается фронтенду.
-        """
-        data = await TemplateManager.read_json(FIELDS_FILE, {})
+        """Возвращает список динамических полей."""
+        data = await TemplateManager.read_json(FIELDS_FILE)
         fields = data.get("fields", [])
-        logger.info(f"Инструкция (динамические поля): {fields}")
+        logger.info("Получены инструкции: %s", fields)
         return {"fields": fields}
 
-    @staticmethod
-    async def list_templates(db: AsyncSession) -> List[Dict]:
-        """
-        Запрашивает из базы данных все шаблоны и возвращает их полную информацию.
-        """
-        result = await db.execute(select(Template))
-        templates = result.scalars().all()
-        # Преобразуем каждый объект Template в словарь
-        templates_info = [
-            {
-                "id": template.id,
-                "type": template.name,  # тип шаблона
-                "display_name": template.display_name,
-                "file_path": template.file_path,
-                "dynamic_fields": template.dynamic_fields,
-                "created_at": (
-                    template.created_at.isoformat() if template.created_at else None
-                ),
-                "user_id": template.user_id,
-            }
-            for template in templates
-        ]
-        logger.info(f"Список шаблонов (БД): {templates_info}")
-        return templates_info
+    @classmethod
+    async def list_templates(cls, db: AsyncSession) -> List[Dict[str, Any]]:
+        """Получает список всех шаблонов."""
+        try:
+            result = await db.execute(
+                select(Template).order_by(Template.created_at.desc())
+            )
+            templates = result.scalars().all()
+
+            return [
+                {
+                    "id": template.id,
+                    "template_type": template.template_type,
+                    "display_name": template.display_name,
+                    "fields": template.fields if template.fields else [],
+                    "created_at": template.created_at,
+                    "updated_at": template.updated_at,
+                }
+                for template in templates
+            ]
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
     @staticmethod
     async def initialize_templates_for_user(user_id: int, db: AsyncSession) -> None:
-        """
-        Инициализирует стандартный набор шаблонов для нового пользователя.
-        Для каждого шаблона задается стандартный тип, отображаемое имя и динамические поля.
-        """
+        """Инициализирует стандартные шаблоны для пользователя."""
         for tpl in REQUIRED_TEMPLATES:
             file_path = TEMPLATES_DIR / f"{tpl}.docx"
-            dynamic_fields = DEFAULT_DYNAMIC_FIELDS.get(tpl, [])
-            display_name = DEFAULT_DISPLAY_NAMES.get(tpl, tpl)
             template_record = Template(
                 name=tpl,
-                display_name=display_name,
+                display_name=DEFAULT_DISPLAY_NAMES.get(tpl, tpl),
                 file_path=str(file_path),
                 user_id=user_id,
-                dynamic_fields=dynamic_fields,
+                dynamic_fields=DEFAULT_DYNAMIC_FIELDS.get(tpl, []),
             )
             db.add(template_record)
-            logger.info(
-                f"Подготовлена запись для шаблона '{tpl}' с названием '{display_name}' и полями {dynamic_fields}"
-            )
+            logger.info("Добавлен шаблон %s для пользователя %d", tpl, user_id)
         try:
             await db.commit()
-            logger.info(
-                f"Стандартные шаблоны инициализированы для пользователя {user_id}"
-            )
         except Exception as e:
             await db.rollback()
             logger.error(
-                f"Ошибка инициализации шаблонов для пользователя {user_id}: {str(e)}"
+                "Ошибка инициализации шаблонов для пользователя %d: %s", user_id, str(e)
             )
             raise HTTPException(status_code=500, detail="Ошибка инициализации шаблонов")
 
-    async def delete_template(
-        template_type: str, display_name: str, db: AsyncSession
-    ) -> dict:
-        """
-        Удаляет шаблон из базы данных и файл по сохраненному пути.
-        """
+    @classmethod
+    async def delete_template(cls, db: AsyncSession, template_id: int) -> None:
+        """Удаляет шаблон по ID."""
         try:
-            # Ищем шаблон в базе данных
-            result = await db.execute(
-                select(Template).where(
-                    Template.name == template_type,
-                    Template.display_name == display_name,
-                )
-            )
-            template = result.scalars().first()
-            
-            if not template:
-                logger.error(f"Шаблон '{display_name}' не найден в базе данных")
-                raise HTTPException(status_code=404, detail="Шаблон не найден")
-            
-            # Получаем путь к файлу из базы данных
-            file_path = template.file_path
+            logger.debug("Attempting to delete template: %d", template_id)
 
-            # Удаляем шаблон из базы данных
+            # Get template
+            template = await db.get(Template, template_id)
+            if not template:
+                logger.error("Template not found: %d", template_id)
+                raise ValueError(f"Template with ID {template_id} not found")
+
+            # Delete file if exists
+            if template.file_path:
+                try:
+                    file_path = Path(template.file_path)
+                    if file_path.exists():
+                        file_path.unlink()
+                        logger.info("Deleted template file: %s", template.file_path)
+                except Exception as e:
+                    logger.warning("Failed to delete template file: %s", str(e))
+
+            # Delete from database
             await db.delete(template)
             await db.commit()
-            
-            # Удаляем файл, если он существует
-            if file_path and os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                    logger.info(f"Файл '{file_path}' успешно удален")
-                except Exception as e:
-                    logger.error(f"Ошибка удаления файла '{file_path}': {str(e)}")
-            
-            logger.info(f"Шаблон '{display_name}' удален из базы данных")
-            return {"message": f"Шаблон '{display_name}' удален из базы данных и файловой системы!"}
-        
-        except Exception as e:
-            logger.error(f"Ошибка удаления шаблона '{display_name}': {str(e)}")
-            raise HTTPException(status_code=500, detail="Ошибка удаления шаблона из базы данных")
 
-    @staticmethod
-    async def upload_template(
-        file, template_type: str, display_name: str, fields: List[str], db: AsyncSession
-    ) -> Dict[str, str]:
-        """
-        Асинхронно загружает шаблон DOCX в папку TEMPLATES_DIR и сохраняет в БД.
-        """
-        if template_type not in REQUIRED_TEMPLATES:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Недопустимый тип шаблона. Разрешены: {REQUIRED_TEMPLATES}",
+            logger.info("Successfully deleted template: %d", template_id)
+
+        except Exception as e:
+            await db.rollback()
+            logger.error("Failed to delete template: %s", str(e), exc_info=True)
+            raise
+
+    @classmethod
+    async def create_template(
+        cls, db: AsyncSession, template_data: Dict[str, Any]
+    ) -> Template:
+        """Создает новый шаблон."""
+        try:
+            # Validate required fields
+            if not template_data.get("template_type"):
+                raise ValueError("Template type is required")
+
+            if not template_data.get("display_name"):
+                raise ValueError("Display name is required")
+
+            # Handle file upload if present
+            file = template_data.get("file")
+            file_path = None
+            if file:
+                file_path = await cls._save_template_file(file)
+
+            # Ensure fields is a list
+            fields = template_data.get("fields", [])
+            if not isinstance(fields, list):
+                fields = []
+
+            # Create new template instance
+            new_template = Template(
+                name=template_data["display_name"],  # Use display_name as name
+                template_type=template_data["template_type"],
+                display_name=template_data["display_name"],
+                fields=fields,
+                file_path=file_path,
+                user_id=template_data.get("user_id"),
             )
 
-        safe_display_name = "_".join(display_name.strip().split())
-        unique_id = uuid4().hex  # Генерируем уникальный идентификатор
-        file_name = f"{template_type}_{safe_display_name}_{unique_id}.docx"
-        file_path = TEMPLATES_DIR / file_name
+            db.add(new_template)
+            await db.commit()
+            await db.refresh(new_template)
 
+            return new_template
+
+        except Exception as e:
+            await db.rollback()
+            raise
+
+    @classmethod
+    async def _save_template_file(cls, file: UploadFile) -> str:
+        """Save uploaded template file and return its path."""
         try:
+            logger.debug("Starting file save for: %s", file.filename)
+
+            # Create unique filename
+            filename = f"{uuid4()}_{file.filename}"
+            file_path = TEMPLATES_DIR / filename
+
+            # Ensure directory exists
+            TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
+
+            # Log file details
+            logger.debug(
+                "File details - Size: %d, Content-Type: %s",
+                file.size if hasattr(file, "size") else -1,
+                file.content_type,
+            )
+
+            # Save file with progress logging
             content = await file.read()
+            logger.debug("Read %d bytes from uploaded file", len(content))
+
             async with aiofiles.open(file_path, "wb") as f:
                 await f.write(content)
-            logger.info(f"Шаблон '{template_type}' загружен в {file_path}")
 
-            # ✅ Добавляем запись в БД с dynamic_fields
-            template_record = Template(
-                name=template_type,
-                display_name=display_name,
-                file_path=str(file_path),
-                dynamic_fields=fields,  # <-- Исправлено: сохраняем переданные поля
-                user_id=None,
-            )
-
-            db.add(template_record)
-            await db.commit()
-            logger.info(f"Шаблон {template_type} сохранён в БД с полями: {fields}")
-
-            return {"message": f"Шаблон '{display_name}' загружен и сохранён!"}
+            logger.info("Successfully saved file to: %s", file_path)
+            return str(file_path)
 
         except Exception as e:
-            logger.error(f"Ошибка загрузки шаблона: {str(e)}")
-            await db.rollback()
-            raise HTTPException(status_code=500, detail="Ошибка загрузки файла")
-
-    @staticmethod
-    async def update_template(template_id: int, updated_data: dict, db: AsyncSession):
-        """
-        Обновляет шаблон, изменяя только разрешенные параметры.
-        Запрещено изменять: file_path, user_id.
-        :param template_id: ID шаблона в БД
-        :param updated_data: Словарь с обновляемыми данными
-        :param db: Асинхронная сессия SQLAlchemy
-        :return: Подтверждающее сообщение
-        """
-        # Запрещенные поля
-        forbidden_fields = {"file_path", "user_id"}
-
-        # Фильтруем запрещенные поля
-        filtered_data = {
-            k: v for k, v in updated_data.items() if k not in forbidden_fields
-        }
-
-        if not filtered_data:
-            logger.warning(
-                f"Нет разрешенных данных для обновления шаблона ID {template_id}"
+            logger.error(
+                "Failed to save file %s: %s", file.filename, str(e), exc_info=True
             )
-            raise HTTPException(
-                status_code=400,
-                detail="Нет данных для обновления или запрещено изменять указанные поля.",
-            )
+            raise ValueError(f"Failed to save file {file.filename}: {str(e)}")
 
-        async with db.begin():
-            result = await db.execute(
-                select(Template).where(Template.id == template_id)
-            )
-            template = result.scalars().first()
 
-            if not template:
-                logger.error(f"Шаблон с ID {template_id} не найден.")
-                raise HTTPException(status_code=404, detail="Шаблон не найден")
-
-            # Обновляем только разрешенные параметры
-            for key, value in filtered_data.items():
-                setattr(template, key, value)
-
-            await db.commit()
-            logger.info(f"Шаблон ID {template_id} обновлён: {filtered_data}")
-
-        return {"message": f"Шаблон ID {template_id} успешно обновлён!"}
+def unique_order(items: List[str]) -> List[str]:
+    """Удаляет дубликаты, сохраняя порядок."""
+    seen = set()
+    return [
+        item
+        for item in items
+        if item and item.strip() and not (item in seen or seen.add(item))
+    ]

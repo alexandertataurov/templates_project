@@ -1,33 +1,42 @@
 """
-Модель платежей.
+Payment model definition.
 """
 
-import logging
-from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-from app.config import settings
+from __future__ import annotations
+from datetime import date
+from decimal import Decimal
+from typing import TYPE_CHECKING
+from sqlalchemy import String, Date, Numeric, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .base import Base
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .invoice import Invoice
 
 
 class Payment(Base):
-    """Модель платежа."""
+    """
+    Payment model representing invoice payments.
+
+    Attributes:
+        invoice_id: Associated invoice identifier
+        payment_date: Date of payment
+        amount: Payment amount
+        invoice: Associated invoice
+    """
 
     __tablename__ = "payments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    invoice_id = Column(
-        Integer,
-        ForeignKey("invoices.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
+    # Relationship fields
+    invoice_id: Mapped[int] = mapped_column(
+        ForeignKey("invoices.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    payment_date = Column(Date, nullable=False)
-    amount = Column(Numeric(15, 2), nullable=False)
 
-    invoice = relationship("Invoice", back_populates="payments")
+    # Payment details
+    payment_date: Mapped[date] = mapped_column(Date, nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
+    payment_method: Mapped[str] = mapped_column(String(50), nullable=False)
+    reference: Mapped[str] = mapped_column(String(100), nullable=True)
 
-
-if settings.DEBUG:
-    logger.debug("Модель Payment загружена")
+    # Relationships
+    invoice: Mapped["Invoice"] = relationship(back_populates="payments")

@@ -3,220 +3,186 @@
 """
 
 import logging
-from typing import List
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from typing import List, Dict, Union, Optional
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services.template_service import TemplateManager
-from app.config import settings  # ✅ Добавляем Debug Mode
-
-router = APIRouter(prefix="/templates", tags=["Templates"])
+from app.services.field_extractor import extract_dynamic_fields
+from app.config import settings
+from pathlib import Path
+from app.models.template import Template
+import json
 
 logger = logging.getLogger(__name__)
 
+router = APIRouter(
+    prefix="/templates",
+    tags=["Templates"],
+    responses={404: {"description": "Not found"}},
+)
 
-@router.get("/check-status")
-async def check_status():
-    """
-    Проверяет, загружены ли шаблоны.
 
-    :return: Статус.
-    """
+@router.get("/", response_model=List[Dict])
+async def list_templates(db: AsyncSession = Depends(get_db)):
+    """Возвращает список шаблонов."""
     try:
-        status = await TemplateManager.check_status()
-        if settings.DEBUG:
-            logger.debug("Debug Mode: Checking template status...")
-        logger.info("Check status result: %s", status)
-        return status
+        return await TemplateManager.list_templates(db)
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        logger.error("Error checking status: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при проверке статуса.")
-
-
-@router.post("/start-setup")
-async def start_setup():
-    """
-    Запускает процесс создания шаблонов.
-
-    :return: Результат запуска.
-    """
-    try:
-        if settings.DEBUG:
-            logger.debug("Debug Mode: Starting template setup...")
-        result = await TemplateManager.start_setup()
-        logger.info("Setup started successfully.")
-        return result
-    except Exception as e:
-        logger.error("Error starting setup: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при запуске настройки.")
-
-
-@router.post("/define-fields")
-async def define_fields(fields: List[str]):
-    """
-    Сохраняет динамические поля.
-
-    :param fields: Список полей.
-    :return: Подтверждение сохранения.
-    """
-    if settings.DEBUG:
-        logger.debug("Debug Mode: Received fields: %s", fields)
-
-    try:
-        result = await TemplateManager.define_fields(fields)
-        logger.info("Fields defined successfully: %s", result)
-        return result
-    except Exception as e:
-        logger.error("Error defining fields: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при определении полей.")
-
-
-@router.get("/instruction")
-async def get_instruction():
-    """
-    Возвращает список динамических полей для формирования инструкции.
-
-    :return: Данные инструкции.
-    """
-    try:
-        instruction = await TemplateManager.get_instruction()
-        if settings.DEBUG:
-            logger.debug("Debug Mode: Instruction data fetched: %s", instruction)
-        logger.info("Instruction data retrieved.")
-        return instruction
-    except Exception as e:
-        logger.error("Error fetching instruction: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при получении инструкции.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.post("/upload")
 async def upload_template(
-    file: UploadFile = File(...),
     template_type: str = Form(...),
     display_name: str = Form(...),
-    fields: List[str] = Form(...),
+    fields: str = Form(...),
+    file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Загружает шаблон и сохраняет его в БД с динамическими полями.
-
-    :param file: Загружаемый файл.
-    :param template_type: Тип шаблона.
-    :param display_name: Название шаблона.
-    :param fields: Динамические поля.
-    :param db: Сессия базы данных.
-    :return: Подтверждение загрузки.
-    """
-    if settings.DEBUG:
-        logger.debug(
-            "Debug Mode: Uploading file: %s, type: %s, name: %s, fields: %s",
-            file.filename,
-            template_type,
-            display_name,
-            fields,
-        )
-
+    """Загружает новый шаблон."""
     try:
-        result = await TemplateManager.upload_template(
-            file, template_type, display_name, fields, db
+        # Parse fields from JSON string
+        try:
+            parsed_fields = json.loads(fields)
+            if not isinstance(parsed_fields, list):
+                raise HTTPException(status_code=422, detail="Fields must be a list")
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=422, detail="Invalid fields format")
+
+        template = await TemplateManager.create_template(
+            db,
+            {
+                "template_type": template_type,
+                "display_name": display_name,
+                "fields": parsed_fields,
+                "file": file,
+            },
         )
-        logger.info("✅ Template uploaded successfully: %s", result)
-        return result
+
+        return {"id": template.id, "message": "Template uploaded successfully"}
+
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error("❌ Upload Error: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при загрузке шаблона.")
+        logger.error("Upload failed: %s", str(e), exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/update")
+@router.post("/extract")
+async def extract_fields_endpoint(file: UploadFile = File(...)):
+    """Извлекает поля из загруженного файла."""
+    try:
+        logger.debug(
+            "Received file for field extraction: %s (type: %s)",
+            file.filename,
+            file.content_type,
+        )
+
+        fields = await extract_dynamic_fields(file)
+        logger.info("Successfully extracted %d fields", len(fields))
+        return {"fields": fields}
+
+    except FileNotFoundError as e:
+        logger.error("File not found: %s - %s", file.filename, str(e))
+        raise HTTPException(status_code=400, detail="File not found")
+    except ValueError as e:
+        logger.error("Invalid file format: %s - %s", file.filename, str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error("Error extracting fields: %s", str(e), exc_info=True)
+        raise HTTPException(
+            status_code=500, detail=f"Failed to extract fields: {str(e)}"
+        )
+
+
+@router.post("/templates/update")
 async def update_template(
     template_id: int = Form(...),
-    display_name: str = Form(...),
-    fields: List[str] = Form(...),
+    display_name: Optional[str] = Form(None),
+    fields: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Обновляет динамические поля и display_name для шаблона.
-
-    :param template_id: ID шаблона.
-    :param display_name: Новое имя шаблона.
-    :param fields: Новый список полей.
-    :param db: Сессия базы данных.
-    :return: Подтверждение обновления.
-    """
-    if settings.DEBUG:
-        logger.debug("Debug Mode: Updating template ID: %d", template_id)
-
+    """Обновляет существующий шаблон."""
     try:
-        updated_data = {"display_name": display_name, "dynamic_fields": fields}
-        result = await TemplateManager.update_template(template_id, updated_data, db)
-        logger.info("Template updated successfully: %s", result)
-        return result
+        logger.info("Received update request for template %d", template_id)
+
+        # Get template
+        template = await db.get(Template, template_id)
+        if not template:
+            raise HTTPException(status_code=404, detail="Template not found")
+
+        # Update fields if provided
+        if display_name is not None:
+            template.display_name = display_name
+
+        if fields is not None:
+            try:
+                template.fields = json.loads(fields)
+            except json.JSONDecodeError as e:
+                logger.error("Invalid JSON in fields: %s", str(e))
+                raise HTTPException(status_code=422, detail="Invalid fields format")
+
+        await db.commit()
+        await db.refresh(template)
+
+        return {
+            "message": "Template updated successfully",
+            "template": {
+                "id": template.id,
+                "display_name": template.display_name,
+                "fields": template.fields,
+            },
+        }
+
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error("Error updating template %d: %s", template_id, e)
-        raise HTTPException(status_code=500, detail="Ошибка при обновлении шаблона.")
+        await db.rollback()
+        logger.error("Failed to update template: %s", str(e), exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/delete")
-async def delete_template(
-    template_type: str = Form(...),
-    display_name: str = Form(...),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Удаляет шаблон по типу и названию.
-
-    :param template_type: Тип шаблона.
-    :param display_name: Название шаблона.
-    :param db: Сессия базы данных.
-    :return: Подтверждение удаления.
-    """
-    if settings.DEBUG:
-        logger.debug(
-            "Debug Mode: Deleting template Type='%s', Name='%s'",
-            template_type,
-            display_name,
-        )
-
+@router.delete("/{template_id}")
+async def delete_template(template_id: int, db: AsyncSession = Depends(get_db)):
+    """Удаляет шаблон по ID."""
     try:
-        result = await TemplateManager.delete_template(template_type, display_name, db)
+        logger.info("Attempting to delete template with ID: %d", template_id)
 
-        if not result:
-            logger.warning(
-                "Template not found for deletion: Type='%s', Name='%s'",
-                template_type,
-                display_name,
-            )
+        # Check if template exists
+        template = await db.get(Template, template_id)
+        if not template:
+            logger.error("Template not found: %d", template_id)
             raise HTTPException(
-                status_code=404, detail=f"Шаблон '{display_name}' не найден."
+                status_code=404, detail=f"Template with ID {template_id} not found"
             )
 
-        logger.info("Template deleted successfully: %s", result)
-        return result
-    except HTTPException as http_ex:
-        logger.error("HTTP Exception: %s", http_ex.detail)
-        raise http_ex
+        # Delete associated file if it exists
+        if template.file_path:
+            try:
+                file_path = Path(template.file_path)
+                if file_path.exists():
+                    file_path.unlink()
+                    logger.info("Deleted template file: %s", template.file_path)
+            except Exception as e:
+                logger.warning("Failed to delete template file: %s", str(e))
+
+        # Delete template from database
+        await db.delete(template)
+        await db.commit()
+
+        logger.info("Successfully deleted template: %d", template_id)
+        return {"message": f"Template {template_id} deleted successfully"}
+
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.exception("Unexpected error while deleting template: %s", e)
-        raise HTTPException(status_code=500, detail="Ошибка при удалении шаблона.")
-
-
-@router.get("/")
-async def list_templates(db: AsyncSession = Depends(get_db)):
-    """
-    Возвращает список шаблонов с полной информацией из базы данных.
-
-    :param db: Сессия базы данных.
-    :return: Список шаблонов.
-    """
-    if settings.DEBUG:
-        logger.debug("Debug Mode: Fetching template list...")
-
-    try:
-        templates = await TemplateManager.list_templates(db)
-        logger.info("Fetched templates: %s", templates)
-        return templates
-    except Exception as e:
-        logger.error("Error fetching templates: %s", e)
+        await db.rollback()
+        logger.error("Error deleting template: %s", str(e), exc_info=True)
         raise HTTPException(
-            status_code=500, detail="Ошибка при получении списка шаблонов."
+            status_code=500, detail=f"Failed to delete template: {str(e)}"
         )

@@ -1,38 +1,49 @@
 """
-Модель инвойсов.
+Invoice model definition.
 """
 
-import logging
-from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-from app.config import settings
+from datetime import date
+from decimal import Decimal
+from typing import List, TYPE_CHECKING
+from sqlalchemy import String, Date, Numeric, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .base import Base
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .contract import Contract
+    from .payment import Payment
 
 
 class Invoice(Base):
-    """Модель инвойса."""
+    """
+    Invoice model representing payment requests.
+
+    Attributes:
+        contract_id: Associated contract identifier
+        invoice_number: Unique invoice identifier
+        invoice_date: Date of issue
+        due_date: Payment due date
+        total_amount: Total invoice amount
+        payments: Associated payments
+    """
 
     __tablename__ = "invoices"
 
-    id = Column(Integer, primary_key=True, index=True)
-    contract_id = Column(
-        Integer,
-        ForeignKey("contracts.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    invoice_number = Column(String(50), unique=True, nullable=False, index=True)
-    invoice_date = Column(Date, nullable=False)
-    due_date = Column(Date, nullable=False)
-    total_amount = Column(Numeric(15, 2), nullable=False)
-
-    contract = relationship("Contract", back_populates="invoices")
-    payments = relationship(
-        "Payment", back_populates="invoice", cascade="all, delete-orphan"
+    # Relationship fields
+    contract_id: Mapped[int] = mapped_column(
+        ForeignKey("contracts.id", ondelete="CASCADE"), index=True, nullable=False
     )
 
+    # Invoice details
+    invoice_number: Mapped[str] = mapped_column(
+        String(50), unique=True, index=True, nullable=False
+    )
+    invoice_date: Mapped[date] = mapped_column(Date, nullable=False)
+    due_date: Mapped[date] = mapped_column(Date, nullable=False)
+    total_amount: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
 
-if settings.DEBUG:
-    logger.debug("Модель Invoice загружена")
+    # Relationships
+    contract: Mapped["Contract"] = relationship(back_populates="invoices")
+    payments: Mapped[List["Payment"]] = relationship(
+        back_populates="invoice", cascade="all, delete-orphan"
+    )

@@ -12,6 +12,7 @@ from sqlalchemy.future import select
 from sqlalchemy import text
 from app.database import get_db
 from datetime import datetime
+
 # from app.celery import celery_app
 # from celery.app.control import Inspect
 # from app.models.user import User
@@ -119,3 +120,64 @@ async def server_config():
         "debug_mode": os.getenv("DEBUG", "false"),
         "worker_status": "Running" if os.system("pgrep -f celery") == 0 else "Stopped",
     }
+
+
+@router.get("/db/schema", tags=["Admin"])
+async def get_db_schema(db: AsyncSession = Depends(get_db)):
+    """Get database schema information for debugging."""
+    try:
+        # Check if templates table exists
+        table_exists = await db.execute(
+            text(
+                "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'templates')"
+            )
+        )
+        table_exists = table_exists.scalar()
+
+        # Get column information if table exists
+        columns = []
+        if table_exists:
+            column_info = await db.execute(
+                text(
+                    "SELECT column_name, data_type, is_nullable FROM information_schema.columns "
+                    "WHERE table_name = 'templates'"
+                )
+            )
+            columns = [dict(row._mapping) for row in column_info]
+
+        return {"table_exists": table_exists, "columns": columns}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@router.post("/db/init-templates", tags=["Admin"])
+async def init_templates_table(db: AsyncSession = Depends(get_db)):
+    """Initialize templates table with correct schema."""
+    try:
+        # Drop the table if it exists
+        await db.execute(text("DROP TABLE IF EXISTS templates CASCADE"))
+
+        # Create the table with all required columns
+        await db.execute(
+            text(
+                """
+            CREATE TABLE templates (
+                id SERIAL PRIMARY KEY,
+                template_type VARCHAR NOT NULL DEFAULT 'default',
+                display_name VARCHAR NOT NULL DEFAULT 'Untitled',
+                fields JSONB,
+                file_path VARCHAR,
+                user_id INTEGER,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            )
+        """
+            )
+        )
+
+        await db.commit()
+
+        return {"message": "Templates table initialized successfully"}
+    except Exception as e:
+        await db.rollback()
+        return {"error": str(e)}

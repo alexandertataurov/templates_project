@@ -1,0 +1,15 @@
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.23.5
+pytest-cov==4.1.0
+
+# Linting & Formatting
+black==25.1.0
+isort==5.13.2
+pylint==3.3.4
+mypy==1.9.0
+flake8==7.0.0
+
+# Development Tools
+ipython==8.22.1
+debugpy==1.8.0 

@@ -1,54 +1,74 @@
 """
-Модель контрактов.
+Contract model definition.
 """
 
-import logging
-from sqlalchemy import Column, Date, Integer, Numeric, String
-from sqlalchemy.orm import relationship
-from app.models.base import Base
-from app.config import settings
+from datetime import date
+from decimal import Decimal
+from typing import List, Optional, TYPE_CHECKING
+from sqlalchemy import String, Date, Numeric
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from .base import Base
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .specification import Specification
+    from .addendum import Addendum
+    from .appendix import Appendix
+    from .invoice import Invoice
 
 
 class Contract(Base):
-    """Модель контракта."""
+    """
+    Contract model representing business agreements.
+
+    Attributes:
+        contract_number: Unique contract identifier
+        contract_date: Date when contract was signed
+        place_of_signing: Location where contract was signed
+        valid_date: Contract expiration date
+        supplier_details: Supplier information
+        buyer_details: Buyer information
+        goods_details: Product information
+        related_documents: Associated documents
+    """
 
     __tablename__ = "contracts"
 
-    id = Column(Integer, primary_key=True, index=True)
-    contract_number = Column(String(50), unique=True, nullable=False, index=True)
-    contract_date = Column(Date, nullable=False)
-    place_of_signing = Column(String(255), nullable=False)
-    valid_date = Column(Date, nullable=True)
-
-    supplier_name = Column(String(255), nullable=False)
-    supplier_address = Column(String(255), nullable=False)
-
-    buyer_name = Column(String(255), nullable=False)
-    buyer_address = Column(String(255), nullable=False)
-
-    goods_name = Column(String(255), nullable=False)
-    quantity = Column(Integer, nullable=False)
-    price_per_unit = Column(Numeric(10, 2), nullable=False)
-    total_price = Column(Numeric(15, 2), nullable=False)
-
-    specifications = relationship(
-        "Specification", back_populates="contract", cascade="all, delete-orphan"
+    # Contract details
+    contract_number: Mapped[str] = mapped_column(
+        String(50), unique=True, index=True, nullable=False
     )
-    addendums = relationship(
-        "Addendum", back_populates="contract", cascade="all, delete-orphan"
-    )
-    appendices = relationship(
-        "Appendix",
-        back_populates="contract",
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
-    invoices = relationship(
-        "Invoice", back_populates="contract", cascade="all, delete-orphan"
-    )
+    contract_date: Mapped[date] = mapped_column(Date, nullable=False)
+    place_of_signing: Mapped[str] = mapped_column(String(255), nullable=False)
+    valid_date: Mapped[Optional[date]] = mapped_column(Date)
 
+    # Supplier details
+    supplier_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    supplier_address: Mapped[str] = mapped_column(String(255), nullable=False)
+    supplier_bank: Mapped[str] = mapped_column(String(255), nullable=False)
+    supplier_account: Mapped[str] = mapped_column(String(50), nullable=False)
 
-if settings.DEBUG:
-    logger.debug("Модель Contract загружена")
+    # Buyer details
+    buyer_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    buyer_address: Mapped[str] = mapped_column(String(255), nullable=False)
+    buyer_bank: Mapped[str] = mapped_column(String(255), nullable=False)
+    buyer_account: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    # Goods details
+    goods_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    quantity: Mapped[int] = mapped_column(nullable=False)
+    price_per_unit: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    total_price: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)
+
+    # Related documents
+    specifications: Mapped[List["Specification"]] = relationship(
+        back_populates="contract", cascade="all, delete-orphan"
+    )
+    addendums: Mapped[List["Addendum"]] = relationship(
+        back_populates="contract", cascade="all, delete-orphan"
+    )
+    appendices: Mapped[List["Appendix"]] = relationship(
+        back_populates="contract", cascade="all, delete-orphan"
+    )
+    invoices: Mapped[List["Invoice"]] = relationship(
+        back_populates="contract", cascade="all, delete-orphan"
+    )

@@ -1,12 +1,21 @@
 import React from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface InputProps {
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-export const Input: React.FC<InputProps> = ({ className, ...props }) => {
+const Input: React.FC<InputProps> = ({ placeholder, value, onChange }) => {
   return (
     <input
-      className={`w-full border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${className}`}
-      {...props}
+      type="text"
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className="template-uploader__input w-full"
     />
   );
 };
+
+export default Input;

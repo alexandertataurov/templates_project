@@ -1,19 +1,45 @@
 import React from "react";
-import clsx from "clsx";
+import { motion } from "framer-motion";
+import { Button as AntButton } from "antd";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "destructive" | "success" | "outline";
+export interface ButtonProps {
+  label: string;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  variant?: "primary" | "secondary" | "danger" | "save" | "update" | "delete";
+  disabled?: boolean;
 }
 
-const variants = {
-  default: "bg-gray-700 hover:bg-gray-800 text-white",
-  destructive: "bg-red-600 hover:bg-red-700 text-white",
-  success: "bg-green-600 hover:bg-green-700 text-white",
-  outline: "border border-gray-500 text-gray-700 hover:bg-gray-100",
-} as const;
+const Button: React.FC<ButtonProps> = ({
+  label,
+  onClick,
+  type = "button",
+  variant = "primary",
+  disabled = false,
+}) => {
+  const variantMap = {
+    primary: "btn-save",
+    secondary: "btn-outline",
+    danger: "btn-delete",
+    save: "btn-save",
+    update: "btn-update",
+    delete: "btn-delete",
+  };
 
-export const Button: React.FC<ButtonProps> = ({ variant = "default", className, ...props }) => {
   return (
-    <button className={clsx("px-4 py-2 rounded transition-all", variants[variant], className)} {...props} />
+    <motion.div whileHover={{ scale: disabled ? 1 : 1.02 }} whileTap={{ scale: disabled ? 1 : 0.98 }}>
+      <AntButton
+        type={variant === "primary" || variant === "save" || variant === "update" ? "primary" : "default"}
+        htmlType={type}
+        onClick={onClick}
+        disabled={disabled}
+        className={`btn ${variantMap[variant] || "btn-save"}`}
+        danger={variant === "danger" || variant === "delete"}
+      >
+        {label}
+      </AntButton>
+    </motion.div>
   );
 };
+
+export default Button;

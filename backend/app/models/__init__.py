@@ -1,17 +1,25 @@
-from app.models.base import Base
-from app.models.payment import Payment
-from app.models.invoice import Invoice
-from app.models.contract import Contract
-from app.models.specification import Specification
-from app.models.addendum import Addendum
-from app.models.appendix import Appendix
-from app.models.template import Template
+"""
+Database model initialization and exports.
+"""
 
+from .base import Base
+from .user import User
+from .contract import Contract
+from .addendum import Addendum
+from .appendix import Appendix
+from .invoice import Invoice
+from .payment import Payment
+from .specification import Specification
+from .template import Template
 
-from sqlalchemy.orm import DeclarativeBase
-
-
-class Base(DeclarativeBase):
-    """Базовый класс для моделей SQLAlchemy"""
-
-    pass
+__all__ = [
+    "Base",
+    "User",
+    "Contract",
+    "Addendum",
+    "Appendix",
+    "Invoice",
+    "Payment",
+    "Specification",
+    "Template",
+]

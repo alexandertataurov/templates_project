@@ -1,47 +1,65 @@
-# Виртуальное окружение
+# Virtual Environment
 venv/
+env/
 .env
+.env.*
 
-# Кэш и временные файлы
+# Cache and Temporary Files
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.so
+.Python
 *.log
 *.pid
+.pytest_cache/
 
-# Конфигурация IDE
+# IDE Configuration
 .vscode/
 .idea/
-*.iml
+*.swp
+*.swo
+*.swn
+.DS_Store
 
-# Логи и временные файлы
+# Logs and Temporary Files
 logs/
 *.log
-*.out
-*.err
+temp/
+tmp/
 
-# Базы данных
+# Database
 *.sqlite3
 *.db
+postgres_data/
 
 # Docker
 docker-compose.override.yml
-*.dockerfile
-.DS_Store
+.docker/
 
-# Ключи и сертификаты
-*.pem
-*.crt
-*.key
+# Dependencies
+node_modules/
+.npm
+.yarn
 
-# Jupyter Notebook
-.ipynb_checkpoints/
-
-# Test coverage
+# Test Coverage
 .coverage
+coverage/
 htmlcov/
-*.cover
-.cache
-nosetests.xml
-coverage.xml
-pytest_cache/
+.tox/
+.nox/
+.pytest_cache/
+
+# Build and Distribution
+dist/
+build/
+*.egg-info/
+
+# Documentation
+docs/_build/
+site/
+
+# Security
+*.pem
+*.key
+*.crt
+*.cert

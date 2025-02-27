@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@layer components {
+  /* Containers */
+  .app-container {
+    @apply w-full min-h-screen bg-gray-50;
+  }
+  .container {
+    @apply mx-auto p-6 max-w-7xl;
+  }
+  .page-title {
+    @apply text-3xl font-bold mb-6 text-gray-800;
+  }
+  .component-block {
+    @apply p-6 rounded-lg shadow bg-white;
+  }
+  .component-title {
+    @apply text-2xl font-semibold mb-3 text-gray-700 border-b border-gray-200 pb-2;
+  }
+
+  /* Navbar */
+  .navbar {
+    @apply p-6 bg-white text-gray-900 shadow sticky top-0 z-10;
+  }
+  .navbar-title {
+    @apply text-2xl font-bold;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply text-white bg-[var(--color-save)] rounded px-6 py-2 font-medium shadow-sm;
+    transition: all 0.2s;
+  }
+  .btn-button {
+    @apply bg-white text-gray-800 border border-[var(--color-border)];
+  }
+  .btn-save {
+    background-color: var(--color-save);
+  }
+  .btn-update {
+    background-color: var(--color-update);
+  }
+  .btn-delete {
+    background-color: var(--color-delete);
+  }
+  .btn-outline {
+    @apply bg-white text-[var(--color-delete)] border border-[var(--color-delete)];
+  }
+  .btn-save:focus {
+    box-shadow: var(--focus-ring-save);
+  }
+  .btn-update:focus {
+    box-shadow: var(--focus-ring-update);
+  }
+  .btn-delete:focus,
+  .btn-outline:focus {
+    box-shadow: var(--focus-ring-delete);
+  }
+
+  /* Inputs */
+  .input-field,
+  .select-field {
+    @apply rounded px-4 py-2 shadow-inner bg-white border border-[var(--color-border)];
+    transition: all 0.2s;
+  }
+  .input-field::placeholder,
+  .select-field::placeholder {
+    color: var(--color-placeholder);
+  }
+  .input-field:focus,
+  .select-field:focus {
+    @apply border-[var(--color-save)] ring-2 ring-[var(--color-save)/20];
+  }
+  .input-success {
+    @apply border-[var(--color-update)] ring-2 ring-[var(--color-update)/20];
+  }
+  .input-error {
+    @apply border-[var(--color-delete)] ring-2 ring-[var(--color-delete)/20];
+  }
+
+  /* Toggle */
+  .toggle {
+    @apply relative w-[42px] h-[22px];
+  }
+  .toggle input {
+    @apply hidden;
+  }
+  .slider {
+    @apply absolute inset-0 bg-gray-300 rounded-full transition-colors duration-200;
+  }
+  .slider::before {
+    @apply absolute w-[18px] h-[18px] left-0.5 bottom-0.5 bg-white rounded-full shadow-sm;
+    content: "";
+    transition: transform 0.2s;
+  }
+  .toggle input:checked + .slider {
+    background-color: var(--color-update);
+  }
+  .toggle input:checked + .slider::before {
+    @apply translate-x-5;
+  }
+
+  /* Tags */
+  .tag {
+    @apply flex items-center gap-2 px-3 py-1 rounded-full text-gray-800 shadow-sm bg-gray-100;
+    transition: background-color 0.2s;
+  }
+  .tag:hover {
+    @apply bg-gray-200;
+  }
+  .tag:focus-within {
+    @apply ring-2 ring-[var(--color-save)/20];
+  }
+  .tag-0 { @apply bg-red-100; }
+  .tag-1 { @apply bg-green-100; }
+  .tag-2 { @apply bg-blue-100; }
+  .tag-3 { @apply bg-yellow-100; }
+  .tag-4 { @apply bg-purple-100; }
+  .tag-5 { @apply bg-pink-100; }
+  .tag-6 { @apply bg-indigo-100; }
+  .tag-close {
+    @apply ml-2 flex items-center justify-center w-6 h-6 text-red-500 font-bold rounded-full cursor-pointer;
+    transition: color 0.2s;
+  }
+  .tag-close:hover {
+    @apply text-red-700;
+  }
+}

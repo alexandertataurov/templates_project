@@ -4,7 +4,11 @@ from sqlalchemy.orm import Session
 
 import app.models as models
 from app.models.specification import Specification
-from app.schemas.specification import SpecificationCreate
+from app.schemas.specification import (
+    SpecificationCreate,
+    SpecificationUpdate,
+    SpecificationResponse,
+)
 
 
 async def create_specification(
