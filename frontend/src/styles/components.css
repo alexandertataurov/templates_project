@@ -37,7 +37,7 @@
 
   /* Buttons */
   .btn {
-    @apply text-white bg-[var(--color-save)] rounded-[6px] px-4 py-1 font-medium shadow-sm;
+    @apply text-white bg-[var(--color-save)] rounded-[6px] px-4 py-1 shadow-sm;
     transition: all 0.3s ease;
   }
   .btn-button {

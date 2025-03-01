@@ -31,5 +31,4 @@ __all__ = [
     "BaseResponseSchema",
     "CurrencyEnum",
     "StatusEnum",
-    "IdType",
 ]

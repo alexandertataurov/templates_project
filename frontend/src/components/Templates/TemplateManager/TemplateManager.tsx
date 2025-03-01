@@ -6,7 +6,7 @@ import ErrorBoundary from "../../ErrorBoundary";
 import TemplateTable from "./TemplateTable";
 import { Template } from "../../../types/template";
 import { updateTemplate, deleteTemplate } from "../../../api/templates";
-import { useDebouncedValue } from "../../../hooks/useDebounceValue";
+import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 
 const TemplateManager: React.FC = () => {
   const { templates, loading, error, fetchTemplates } = useTemplates();

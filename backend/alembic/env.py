@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import AsyncEngine
 from alembic import context
 
-from app.database import engine
+from backend.app.core.database import engine
 from app.models import Base
 from app.config import settings
 

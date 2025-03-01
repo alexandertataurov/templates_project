@@ -7,7 +7,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Annotated, TypeVar, Optional, List, Dict
 from pydantic import BaseModel, Field, condecimal
-from enum import Enum  # Import from enum module instead of typing
+from enum import Enum
 
 # Common type definitions
 PriceType = Annotated[

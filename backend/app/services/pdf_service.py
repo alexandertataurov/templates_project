@@ -2,19 +2,15 @@
 Service for generating and managing PDF documents.
 """
 
-import os
-import shutil
 import logging
-import subprocess
-import asyncio
 from pathlib import Path
+import asyncio
 from typing import Optional
 from fastapi import HTTPException
 from datetime import datetime
-
 from docxtpl import DocxTemplate
-from app.schemas.contract import ContractBase
-from app.config import settings
+from app.schemas.document import DocumentBase
+from app.core.config import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -23,14 +19,55 @@ class PDFService:
     """Service for handling PDF document operations."""
 
     def __init__(self):
-        """Initialize service with required directories."""
         self.base_dir = Path(__file__).resolve().parent.parent
         self.templates_dir = self.base_dir / "assets" / "templates"
         self.generated_dir = self.base_dir / "assets" / "generated_docs"
-
-        # Ensure directories exist
         self.templates_dir.mkdir(parents=True, exist_ok=True)
         self.generated_dir.mkdir(parents=True, exist_ok=True)
+
+    async def generate_document_docx(
+        self, document_data: DocumentBase, template_name: str
+    ) -> Path:
+        """
+        Generate a document in DOCX format.
+
+        Args:
+            document_data: Document data for template
+            template_name: Name of the template file
+
+        Returns:
+            Path to generated document
+        """
+        template_path = self.templates_dir / template_name
+        if not template_path.exists():
+            logger.error("Template not found: %s", template_name)
+            raise HTTPException(
+                status_code=404, detail=f"Template {template_name} not found"
+            )
+
+        try:
+            doc = DocxTemplate(template_path)
+            render_data = {
+                "document_type": document_data.document_type,
+                "reference_number": document_data.reference_number,
+                "created_date": document_data.created_date.isoformat(),
+                **document_data.dynamic_fields,
+            }
+            doc.render(render_data)
+            output_path = (
+                self.generated_dir
+                / f"{document_data.document_type}_{document_data.reference_number}.docx"
+            )
+            doc.save(output_path)
+            logger.info(
+                "Generated DOCX: %s using template: %s", output_path.name, template_name
+            )
+            return output_path
+        except Exception as e:
+            logger.error("Failed to generate DOCX: %s", str(e), exc_info=True)
+            raise HTTPException(
+                status_code=500, detail=f"Failed to generate document: {str(e)}"
+            )
 
     async def convert_docx_to_pdf(self, docx_path: Path) -> Path:
         """
@@ -41,14 +78,9 @@ class PDFService:
 
         Returns:
             Path to generated PDF file
-
-        Raises:
-            HTTPException: If conversion fails
         """
         try:
             pdf_path = docx_path.with_suffix(".pdf")
-
-            # Use LibreOffice for conversion
             process = await asyncio.create_subprocess_exec(
                 "soffice",
                 "--headless",
@@ -60,118 +92,18 @@ class PDFService:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-
             stdout, stderr = await process.communicate()
-
             if process.returncode != 0:
-                logger.error(
-                    "PDF conversion failed: %s",
-                    stderr.decode(),
-                    extra={"docx_path": str(docx_path)},
-                )
+                logger.error("PDF conversion failed: %s", stderr.decode())
                 raise HTTPException(
                     status_code=500, detail="Failed to convert document to PDF"
                 )
-
             logger.info("Successfully converted DOCX to PDF: %s", pdf_path.name)
             return pdf_path
-
         except Exception as e:
-            logger.error(
-                "PDF conversion error: %s",
-                str(e),
-                exc_info=True,
-                extra={"docx_path": str(docx_path)},
-            )
+            logger.error("PDF conversion error: %s", str(e), exc_info=True)
             raise HTTPException(
                 status_code=500, detail=f"PDF conversion failed: {str(e)}"
-            )
-
-    async def generate_contract_docx(
-        self, contract_data: ContractBase, template_name: str
-    ) -> Path:
-        """
-        Generate a contract document in DOCX format.
-
-        Args:
-            contract_data: Contract data for template
-            template_name: Name of the template file
-
-        Returns:
-            Path to generated document
-        """
-        template_path = self.templates_dir / template_name
-        if not template_path.exists():
-            raise HTTPException(
-                status_code=404, detail=f"Template {template_name} not found"
-            )
-
-        try:
-            doc = DocxTemplate(template_path)
-            doc.render(contract_data.model_dump())
-
-            output_path = (
-                self.generated_dir / f"contract_{contract_data.contract_number}.docx"
-            )
-            doc.save(output_path)
-
-            logger.info(
-                "Generated DOCX contract: %s using template: %s",
-                output_path.name,
-                template_name,
-            )
-            return output_path
-
-        except Exception as e:
-            logger.error("Failed to generate DOCX: %s", str(e), exc_info=True)
-            raise HTTPException(
-                status_code=500, detail=f"Failed to generate document: {str(e)}"
-            )
-
-    async def convert_to_pdf(self, docx_path: Path) -> Path:
-        """
-        Convert a DOCX file to PDF using LibreOffice.
-
-        Args:
-            docx_path: Path to DOCX file
-
-        Returns:
-            Path to generated PDF
-        """
-        if not shutil.which("libreoffice"):
-            raise HTTPException(status_code=500, detail="LibreOffice is not installed")
-
-        try:
-            pdf_path = docx_path.with_suffix(".pdf")
-
-            process = await asyncio.create_subprocess_exec(
-                "libreoffice",
-                "--headless",
-                "--convert-to",
-                "pdf",
-                "--outdir",
-                str(self.generated_dir),
-                str(docx_path),
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-
-            stdout, stderr = await process.communicate()
-
-            if process.returncode != 0:
-                logger.error(
-                    "PDF conversion failed: %s",
-                    stderr.decode() if stderr else "Unknown error",
-                )
-                raise HTTPException(status_code=500, detail="PDF conversion failed")
-
-            logger.info("Generated PDF: %s", pdf_path.name)
-            return pdf_path
-
-        except Exception as e:
-            logger.error("Failed to convert to PDF: %s", str(e), exc_info=True)
-            raise HTTPException(
-                status_code=500, detail=f"Failed to convert to PDF: {str(e)}"
             )
 
     async def cleanup_old_files(self, max_age_days: int = 7) -> None:
@@ -194,10 +126,10 @@ pdf_service = PDFService()
 
 
 # Export individual functions for backward compatibility
-async def generate_contract_docx(
-    contract_data: ContractBase, template_name: str
+async def generate_document_docx(
+    document_data: DocumentBase, template_name: str
 ) -> Path:
-    return await pdf_service.generate_contract_docx(contract_data, template_name)
+    return await pdf_service.generate_document_docx(document_data, template_name)
 
 
 async def convert_docx_to_pdf(docx_path: Path) -> Path:

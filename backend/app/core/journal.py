@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models.journal import JournalEntry
-from .logging import get_logger
+from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -20,8 +20,7 @@ class Journal:
         db: AsyncSession,
         event_type: str,
         user_id: Optional[int],
-        entity_type: str,
-        entity_id: Optional[int],
+        document_id: Optional[int],
         details: Dict[str, Any],
         ip_address: Optional[str] = None,
     ) -> JournalEntry:
@@ -32,8 +31,7 @@ class Journal:
             db: Database session
             event_type: Type of event (create, update, delete, etc.)
             user_id: ID of user performing action
-            entity_type: Type of entity being modified
-            entity_id: ID of entity being modified
+            document_id: ID of document being modified
             details: Additional event details
             ip_address: IP address of request
 
@@ -43,28 +41,23 @@ class Journal:
         entry = JournalEntry(
             event_type=event_type,
             user_id=user_id,
-            entity_type=entity_type,
-            entity_id=entity_id,
+            document_id=document_id,
             details=details,
             ip_address=ip_address,
             timestamp=datetime.utcnow(),
         )
-
         try:
             db.add(entry)
             await db.commit()
             await db.refresh(entry)
-
             logger.info(
                 "Audit event logged",
                 extra={
                     "event_type": event_type,
                     "user_id": user_id,
-                    "entity_type": entity_type,
-                    "entity_id": entity_id,
+                    "document_id": document_id,
                 },
             )
-
             return entry
         except Exception as e:
             logger.error(
@@ -73,23 +66,19 @@ class Journal:
                 extra={
                     "event_type": event_type,
                     "user_id": user_id,
-                    "entity_type": entity_type,
-                    "entity_id": entity_id,
+                    "document_id": document_id,
                 },
             )
             raise
 
     @staticmethod
-    async def get_entity_history(
-        db: AsyncSession, entity_type: str, entity_id: int
+    async def get_document_history(
+        db: AsyncSession, document_id: int
     ) -> list[JournalEntry]:
-        """Get audit history for an entity."""
+        """Get audit history for a document."""
         result = await db.execute(
             select(JournalEntry)
-            .where(
-                JournalEntry.entity_type == entity_type,
-                JournalEntry.entity_id == entity_id,
-            )
+            .where(JournalEntry.document_id == document_id)
             .order_by(JournalEntry.timestamp.desc())
         )
         return result.scalars().all()

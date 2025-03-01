@@ -1,39 +1,42 @@
 """
-Service for generating contract and payment statistics.
+Service for generating document statistics.
 """
 
 from datetime import date, datetime
 from typing import List, Dict, Any
+import logging
 from sqlalchemy import func, extract, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.document import Document
 
-from app.models.contract import Contract
-from app.models.addendum import Addendum
-from app.models.payment import Payment
-from app.models.invoice import Invoice
+logger = logging.getLogger(__name__)
 
 
 class StatsService:
-    """Service for handling statistics operations."""
+    """Service for handling document statistics operations."""
 
     @staticmethod
-    async def get_total_contract_amount(db: AsyncSession) -> float:
-        """Get total amount across all contracts."""
-        result = await db.execute(select(func.sum(Contract.total_price)))
-        return float(result.scalar() or 0)
-
-    @staticmethod
-    async def get_total_addendum_amount(db: AsyncSession) -> float:
-        """Get total amount across all addendums."""
-        result = await db.execute(select(func.sum(Addendum.additional_amount)))
-        return float(result.scalar() or 0)
+    async def get_total_amount_by_type(db: AsyncSession, document_type: str) -> float:
+        """Get total amount for a specific document type from dynamic_fields."""
+        result = await db.execute(
+            select(
+                func.sum(
+                    func.cast(
+                        Document.dynamic_fields["total_price"].astext, func.Numeric
+                    )
+                )
+            ).where(Document.document_type == document_type)
+        )
+        total = result.scalar() or 0
+        logger.info("Total amount for %s: %f", document_type, total)
+        return float(total)
 
     @staticmethod
     async def get_monthly_stats(
         db: AsyncSession, year: int, month: int
     ) -> Dict[str, Any]:
         """
-        Get monthly statistics.
+        Get monthly statistics for all documents.
 
         Args:
             db: Database session
@@ -43,36 +46,39 @@ class StatsService:
         Returns:
             Dictionary with monthly statistics
         """
-        # Get contracts created in the month
-        contracts_query = select(func.count(Contract.id)).where(
-            extract("year", Contract.contract_date) == year,
-            extract("month", Contract.contract_date) == month,
+        logger.debug("Fetching monthly stats for %d-%d", year, month)
+        # Count documents by type
+        query = (
+            select(Document.document_type, func.count(Document.id).label("count"))
+            .where(
+                extract("year", Document.created_date) == year,
+                extract("month", Document.created_date) == month,
+            )
+            .group_by(Document.document_type)
         )
+        result = await db.execute(query)
+        doc_counts = {row[0]: row[1] for row in result.fetchall()}
 
-        # Get payments made in the month
-        payments_query = select(func.sum(Payment.amount)).where(
-            extract("year", Payment.payment_date) == year,
-            extract("month", Payment.payment_date) == month,
+        # Total amount from dynamic_fields (assuming 'total_price' exists)
+        total_query = select(
+            func.sum(
+                func.cast(Document.dynamic_fields["total_price"].astext, func.Numeric)
+            )
+        ).where(
+            extract("year", Document.created_date) == year,
+            extract("month", Document.created_date) == month,
         )
+        total_result = await db.execute(total_query)
+        total_amount = float(total_result.scalar() or 0)
 
-        # Get invoices issued in the month
-        invoices_query = select(func.count(Invoice.id)).where(
-            extract("year", Invoice.invoice_date) == year,
-            extract("month", Invoice.invoice_date) == month,
-        )
-
-        # Execute queries
-        contracts_result = await db.execute(contracts_query)
-        payments_result = await db.execute(payments_query)
-        invoices_result = await db.execute(invoices_query)
-
-        return {
+        stats = {
             "year": year,
             "month": month,
-            "contracts_count": contracts_result.scalar() or 0,
-            "total_payments": float(payments_result.scalar() or 0),
-            "invoices_count": invoices_result.scalar() or 0,
+            "document_counts": doc_counts,
+            "total_amount": total_amount,
         }
+        logger.info("Monthly stats retrieved: %s", stats)
+        return stats
 
 
 # Create service instance
@@ -81,15 +87,8 @@ stats_service = StatsService()
 
 # Export individual functions for backward compatibility
 async def get_monthly_stats(db: AsyncSession, year: int, month: int) -> Dict[str, Any]:
-    """Get statistics for a specific month."""
     return await stats_service.get_monthly_stats(db, year, month)
 
 
-async def get_total_contract_amount(db: AsyncSession) -> float:
-    """Get total amount across all contracts."""
-    return await stats_service.get_total_contract_amount(db)
-
-
-async def get_total_addendum_amount(db: AsyncSession) -> float:
-    """Get total amount across all addendums."""
-    return await stats_service.get_total_addendum_amount(db)
+async def get_total_amount_by_type(db: AsyncSession, document_type: str) -> float:
+    return await stats_service.get_total_amount_by_type(db, document_type)

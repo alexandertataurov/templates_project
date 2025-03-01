@@ -3,24 +3,26 @@ FastAPI application factory and configuration.
 """
 
 import logging
+import os
+from dotenv import load_dotenv
 from typing import Callable
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import settings
+from app.core.config import settings  # Updated import
 from app.core.logging import setup_logging
 from app.core.middleware import setup_middleware
 from app.routers import (
-    template_router,
-    contract_router,
-    addendum_router,
+    documents_router,
     stats_router,
-    specification_router,
-    appendix_router,
-    exchange_rate_router,
-    invoice_router,
     pdf_router,
     admin_router,
+    template_router,
 )
+
+# Load .env explicitly before imports (optional if already in config.py)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_FILE_PATH = os.path.join(BASE_DIR, ".env")
+load_dotenv(dotenv_path=ENV_FILE_PATH, verbose=True)
 
 logger = logging.getLogger(__name__)
 
@@ -28,18 +30,12 @@ logger = logging.getLogger(__name__)
 def register_routes(app: FastAPI) -> None:
     """Register all application routers."""
     routers = [
-        template_router,
-        contract_router,
-        addendum_router,
+        documents_router,
         stats_router,
-        specification_router,
-        appendix_router,
-        exchange_rate_router,
-        invoice_router,
         pdf_router,
         admin_router,
+        template_router,
     ]
-
     for router in routers:
         app.include_router(router)
         logger.debug(
@@ -54,19 +50,19 @@ def create_app() -> FastAPI:
 
     # Create FastAPI instance
     app = FastAPI(
-        title="Contracts API",
+        title=settings.project_name,
         description="API for managing contracts and related documents",
-        version="1.0.0",
+        version=settings.version,
         docs_url="/docs" if settings.DEBUG else None,
     )
 
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=settings.cors_origins,
+        allow_credentials=settings.cors_allow_credentials,
+        allow_methods=settings.cors_allow_methods,
+        allow_headers=settings.cors_allow_headers,
     )
 
     # Register routes
@@ -84,4 +80,5 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
 
+    logger.info("Starting Uvicorn server with DEBUG=%s", settings.DEBUG)
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)

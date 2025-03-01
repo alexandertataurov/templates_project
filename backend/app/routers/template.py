@@ -3,14 +3,12 @@
 """
 
 import logging
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
-from app.services.template_service import TemplateManager
+from app.core.database import get_db
+from app.services.template_manager import TemplateManager
 from app.services.field_extractor import extract_dynamic_fields
-from app.config import settings
-from pathlib import Path
 from app.models.template import Template
 import json
 
@@ -46,7 +44,6 @@ async def upload_template(
 ):
     """Загружает новый шаблон."""
     try:
-        # Parse fields from JSON string
         try:
             parsed_fields = json.loads(fields)
             if not isinstance(parsed_fields, list):
@@ -63,9 +60,7 @@ async def upload_template(
                 "file": file,
             },
         )
-
         return {"id": template.id, "message": "Template uploaded successfully"}
-
     except HTTPException:
         raise
     except Exception as e:
@@ -80,17 +75,11 @@ async def extract_fields_endpoint(file: UploadFile = File(...)):
         logger.debug(
             "Received file for field extraction: %s (type: %s)",
             file.filename,
-            
             file.content_type,
         )
-
         fields = await extract_dynamic_fields(file)
         logger.info("Successfully extracted %d fields", len(fields))
         return {"fields": fields}
-
-    except FileNotFoundError as e:
-        logger.error("File not found: %s - %s", file.filename, str(e))
-        raise HTTPException(status_code=400, detail="File not found")
     except ValueError as e:
         logger.error("Invalid file format: %s - %s", file.filename, str(e))
         raise HTTPException(status_code=400, detail=str(e))
@@ -101,37 +90,29 @@ async def extract_fields_endpoint(file: UploadFile = File(...)):
         )
 
 
-@router.post("/update")
+@router.put("/update")
 async def update_template(
     template_id: int = Form(...),
     display_name: Optional[str] = Form(None),
     fields: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db),
 ):
-    
     """Обновляет существующий шаблон."""
     try:
         logger.info("Received update request for template %d", template_id)
-
-        # Get template
         template = await db.get(Template, template_id)
         if not template:
             raise HTTPException(status_code=404, detail="Template not found")
-
-        # Update fields if provided
         if display_name is not None:
             template.display_name = display_name
-
         if fields is not None:
             try:
                 template.fields = json.loads(fields)
             except json.JSONDecodeError as e:
                 logger.error("Invalid JSON in fields: %s", str(e))
                 raise HTTPException(status_code=422, detail="Invalid fields format")
-
         await db.commit()
         await db.refresh(template)
-
         return {
             "message": "Template updated successfully",
             "template": {
@@ -140,7 +121,6 @@ async def update_template(
                 "fields": template.fields,
             },
         }
-
     except HTTPException:
         raise
     except Exception as e:
@@ -154,16 +134,12 @@ async def delete_template(template_id: int, db: AsyncSession = Depends(get_db)):
     """Удаляет шаблон по ID."""
     try:
         logger.info("Attempting to delete template with ID: %d", template_id)
-
-        # Check if template exists
         template = await db.get(Template, template_id)
         if not template:
             logger.error("Template not found: %d", template_id)
             raise HTTPException(
                 status_code=404, detail=f"Template with ID {template_id} not found"
             )
-
-        # Delete associated file if it exists
         if template.file_path:
             try:
                 file_path = Path(template.file_path)
@@ -172,14 +148,10 @@ async def delete_template(template_id: int, db: AsyncSession = Depends(get_db)):
                     logger.info("Deleted template file: %s", template.file_path)
             except Exception as e:
                 logger.warning("Failed to delete template file: %s", str(e))
-
-        # Delete template from database
         await db.delete(template)
         await db.commit()
-
         logger.info("Successfully deleted template: %d", template_id)
         return {"message": f"Template {template_id} deleted successfully"}
-
     except HTTPException:
         raise
     except Exception as e:

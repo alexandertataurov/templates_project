@@ -4,9 +4,9 @@ Journal model for audit logging.
 
 from datetime import datetime
 from typing import Dict, Any, Optional
-from sqlalchemy import JSON, String, DateTime, Integer, ForeignKey
+from sqlalchemy import String, DateTime, Integer, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from .base import Base
+from app.core.database import Base
 
 
 class JournalEntry(Base):
@@ -16,8 +16,7 @@ class JournalEntry(Base):
     Attributes:
         event_type: Type of event (create, update, delete)
         user_id: User who performed the action
-        entity_type: Type of entity modified
-        entity_id: ID of entity modified
+        document_id: ID of the document modified
         details: Additional event details
         ip_address: IP address of request
         timestamp: When the event occurred
@@ -27,8 +26,9 @@ class JournalEntry(Base):
 
     # Event details
     event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    entity_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    entity_id: Mapped[Optional[int]] = mapped_column(Integer, index=True)
+    document_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("documents.id", ondelete="SET NULL"), index=True
+    )
     details: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
 
     # User info
@@ -43,4 +43,5 @@ class JournalEntry(Base):
     )
 
     # Relationships
-    user = relationship("User")
+    user: Mapped[Optional["User"]] = relationship("User")
+    document: Mapped[Optional["Document"]] = relationship("Document")

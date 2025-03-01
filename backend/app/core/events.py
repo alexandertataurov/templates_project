@@ -5,7 +5,7 @@ Application event handlers.
 from typing import Callable
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncEngine
-from app.database import engine
+from app.core.database import engine
 
 
 async def close_db_connection(app: FastAPI, engine: AsyncEngine) -> None:
@@ -25,7 +25,7 @@ def create_start_app_handler(app: FastAPI) -> Callable:
     """
 
     async def start_app() -> None:
-        # Add startup tasks here
+        # Add startup tasks here if needed (e.g., initializing metrics)
         pass
 
     return start_app

@@ -5,17 +5,11 @@ Centralized service initialization and management.
 import logging
 from typing import Dict, Any
 
-from .addendum_service import AddendumService
-from .appendix_service import AppendixService
-from .contract_service import ContractService
-from .exchange_rate_service import ExchangeRateService
-from .invoice_service import InvoiceService
-from .payment_service import PaymentService
+from .document_service import DocumentService
 from .pdf_service import PDFService
 from .stats_service import StatsService
-from .template_service import TemplateManager
-
-from app.models import Contract, Addendum, Appendix, Invoice, Payment
+from .template_manager import TemplateManager
+from app.models.document import Document
 
 logger = logging.getLogger(__name__)
 
@@ -31,29 +25,15 @@ class ServiceRegistry:
     def _initialize_services(self) -> None:
         """Initialize all service instances."""
         try:
-            # Initialize core services
             self.services.update(
                 {
-                    "contract": ContractService(Contract),
-                    "addendum": AddendumService(Addendum),
-                    "appendix": AppendixService(Appendix),
-                    "invoice": InvoiceService(Invoice),
-                    "payment": PaymentService(Payment),
+                    "document": DocumentService(Document),
                     "template": TemplateManager(),
-                }
-            )
-
-            # Initialize utility services
-            self.services.update(
-                {
                     "pdf": PDFService(),
                     "stats": StatsService(),
-                    "exchange_rate": ExchangeRateService(),
                 }
             )
-
             logger.info("All services initialized successfully")
-
         except Exception as e:
             logger.error("Failed to initialize services: %s", str(e), exc_info=True)
             raise

@@ -6,7 +6,7 @@ import time
 from typing import Any, Dict, Optional
 from contextlib import contextmanager
 from statistics import mean, median
-from .logging import get_logger
+from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -32,7 +32,6 @@ class Metrics:
         """Get statistics for a metric."""
         if metric_name not in self.metrics:
             return {}
-
         values = self.metrics[metric_name]
         return {
             "count": len(values),
@@ -52,7 +51,6 @@ class Metrics:
         self.counters.clear()
 
 
-# Global metrics instance
 metrics = Metrics()
 
 
@@ -62,8 +60,8 @@ def timing(name: str, extra: Optional[Dict[str, Any]] = None):
     Context manager for timing code blocks.
 
     Example:
-        >>> with timing("db_query", {"table": "users"}):
-        ...     result = db.execute(query)
+        with timing("db_query", {"table": "documents"}):
+            result = db.execute(query)
     """
     start_time = time.perf_counter()
     try:
@@ -71,9 +69,7 @@ def timing(name: str, extra: Optional[Dict[str, Any]] = None):
     finally:
         elapsed = time.perf_counter() - start_time
         metrics.record_time(name, elapsed)
-
         log_data = {"duration": elapsed}
         if extra:
             log_data.update(extra)
-
         logger.info(f"Operation timing: {name}", extra={"metrics": log_data})

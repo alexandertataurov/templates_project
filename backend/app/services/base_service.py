@@ -16,9 +16,6 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     """
     Base class for services with common CRUD operations.
-
-    Attributes:
-        model: The SQLAlchemy model class
     """
 
     def __init__(self, model: Type[ModelType]):
@@ -53,12 +50,10 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> List[ModelType]:
         """Get multiple records with pagination and filtering."""
         query = select(self.model)
-
         if filters:
             for field, value in filters.items():
                 if hasattr(self.model, field):
                     query = query.filter(getattr(self.model, field) == value)
-
         query = query.offset(skip).limit(limit)
         result = await db.execute(query)
         return result.scalars().all()
@@ -76,11 +71,9 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             if isinstance(obj_in, dict)
             else obj_in.model_dump(exclude_unset=True)
         )
-
         for field, value in obj_data.items():
             if hasattr(db_obj, field):
                 setattr(db_obj, field, value)
-
         db.add(db_obj)
         try:
             await db.commit()
@@ -95,7 +88,6 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj = await self.get(db, id)
         if not obj:
             return False
-
         try:
             await db.delete(obj)
             await db.commit()
